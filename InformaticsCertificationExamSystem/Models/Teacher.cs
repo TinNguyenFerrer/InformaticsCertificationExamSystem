@@ -1,0 +1,41 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace InformaticsCertificationExamSystem.Models
+{
+    [Table("Teacher")]
+    [Index(nameof(IdentifierCode), IsUnique = true)]
+    public class Teacher
+    {
+        [Column("TeacherID")]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity), Key]
+        public int Id { get; set; }
+
+        [Column("FirstName")]
+        [Required]
+        [MaxLength(255)]
+        public string FirstName { get; set; }
+
+        [Required]
+        [MaxLength(255)]
+        [Column("LastName")]
+        public string LastName { get; set; }
+
+        [MaxLength(20)]
+        [Required]
+        public string IdentifierCode { get; set; }
+
+        [MaxLength(20)]
+        public string PhoneNumber { get; set;}
+
+        [Required]
+        [MaxLength(255)]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Not a valid email address")]
+        public string Email { get; set; }
+
+        [MaxLength(500)]
+        public string Address { get; set; }
+
+    }
+}
