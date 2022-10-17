@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 namespace InformaticsCertificationExamSystem.Persistence.Repositories
 {
-    public class Repository : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         public DbSet<T> Dbset
         {
