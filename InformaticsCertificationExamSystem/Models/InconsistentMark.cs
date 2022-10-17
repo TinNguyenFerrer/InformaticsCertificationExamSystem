@@ -14,5 +14,9 @@ namespace InformaticsCertificationExamSystem.Models
         public float Excel { get; set; }
         public float PowerPoint { get; set; }
 
+        public int MarkOfStudentId { get; set; }
+        public virtual Student Student { get; set; }
+        public virtual ICollection<Teacher_InconsistentMark> Teacher_InconsistentMarks { get; set; }
+
     }
 }

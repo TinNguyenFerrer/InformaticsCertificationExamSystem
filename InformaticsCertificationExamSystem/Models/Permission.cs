@@ -12,13 +12,16 @@ namespace InformaticsCertificationExamSystem.Models
         [Column("PermissionID")]
         public int Id { get; set; }
 
-        [DefaultValue(true)]
-        public Boolean Supervision { get; set; } = true;
+        [DefaultValue(false)]
+        public Boolean Supervision { get; set; } = false;
 
         [DefaultValue(false)]
         public Boolean Marker { get; set; } = false;
 
         [DefaultValue(false)]
         public Boolean Admin { get; set; } = false ;
+
+        public int PermissionOfTeacherID { get; set; }
+        public virtual Teacher Teacher { get; set; }
     }
 }

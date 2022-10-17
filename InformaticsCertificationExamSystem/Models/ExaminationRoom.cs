@@ -8,7 +8,7 @@ namespace InformaticsCertificationExamSystem.Models
     [Table("ExaminationRoom")]
     public class ExaminationRoom
     {
-        [Column("RoomID")]
+        [Column("ExaminationRoomID")]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity), Key]
         public int Id { get; set; }
 
@@ -20,6 +20,9 @@ namespace InformaticsCertificationExamSystem.Models
         [Column("Capacity")]
         [Required]
         public int Capacity { get; set; }
+
+        public virtual ICollection<Examination_ExaminationRoom> Examination_ExaminationRooms { get; set; }
+
 
 
     }

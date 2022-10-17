@@ -36,5 +36,11 @@ namespace InformaticsCertificationExamSystem.Models
         [DefaultValue(0)]
         public int NumberOfCheats { get; set; }
 
+        public FinalResult FinalResult { get; set; }
+        public InconsistentMark InconsistentMark { get; set; }
+        public TheoryTest TheoryTest { get; set; }
+        public StudentType StudentType { get; set; }
+        public FileSubmitted FileSubmitted { get; set; }
+        public TestSchedule TestSchedule { get; set; }
     }
 }

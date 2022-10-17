@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,14 +44,18 @@ namespace InformaticsCertificationExamSystem.Models
         [Column("MinimumPracticeScore")]
         public float MinimumPracticeMark { get; set; }
 
-        [Column("ReviewTime")]
-        [Required]
-        public Boolean IsBlocked { get; set; }
+        //[Column("ReviewTime")]
+        //[DefaultValue(false)]
+        //[Required]
+        //public Boolean IsBlocked { get; set; }
 
         [Column("GradingDeadline")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}", ApplyFormatInEditMode = true)]
         [Required]
         public DateTime GradingDeadline { get; set; }
 
+        public virtual ICollection<Examination_ExaminationRoom> Examination_ExaminationRooms { get; set; }
+
+        public virtual ICollection<TestSchedule> TestSchedules { get; set; }
     }
 }

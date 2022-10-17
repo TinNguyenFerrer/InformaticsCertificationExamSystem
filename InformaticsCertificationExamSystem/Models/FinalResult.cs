@@ -13,6 +13,8 @@ namespace InformaticsCertificationExamSystem.Models
         public float Excel { get; set; }
         public float PowerPoint { get; set; }
         public float Practice { get; set; }
-        public float FinalMark { get; set; } 
+        public float FinalMark { get; set; }
+        public int ResultOfStudentId { get; set; }
+        public virtual Student Student { get; set; }
     }
 }

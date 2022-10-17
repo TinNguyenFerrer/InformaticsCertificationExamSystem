@@ -15,5 +15,8 @@ namespace InformaticsCertificationExamSystem.Models
         public string ExamCode { get; set; }
         [MaxLength(255)]
         public string Path { get; set; }
+
+        public virtual ICollection<Student> Students { get; set; }
+        public virtual ICollection<TestSchedule_TheoryTest> TestSchedule_TheoryTests { get; set; }
     }
 }

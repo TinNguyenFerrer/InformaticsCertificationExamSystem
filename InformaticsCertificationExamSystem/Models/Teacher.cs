@@ -12,15 +12,12 @@ namespace InformaticsCertificationExamSystem.Models
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity), Key]
         public int Id { get; set; }
 
-        [Column("FirstName")]
+        [Column("FullName")]
         [Required]
         [MaxLength(255)]
-        public string FirstName { get; set; }
+        public string FullName { get; set; }
 
-        [Required]
-        [MaxLength(255)]
-        [Column("LastName")]
-        public string LastName { get; set; }
+        
 
         [MaxLength(20)]
         [Required]
@@ -36,6 +33,11 @@ namespace InformaticsCertificationExamSystem.Models
 
         [MaxLength(500)]
         public string Address { get; set; }
+
+        public virtual Permission Permission { get; set; }
+
+       
+        public virtual ICollection<Teacher_InconsistentMark> Teacher_InconsistentMarks { get; set; }
 
     }
 }

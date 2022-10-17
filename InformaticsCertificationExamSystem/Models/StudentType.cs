@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InformaticsCertificationExamSystem.Models
 {
-    [Table("TypeCandidate")]
-    public class TypeCandidate
+    [Table("StudentType")]
+    public class StudentType
     {
-        [Column("TypeCandidateID")]
+        [Column("StudentTypeID")]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity), Key]
         public int Id { get; set; }
 
@@ -16,5 +16,6 @@ namespace InformaticsCertificationExamSystem.Models
         [MaxLength(255)]
         public string Name { get; set; }
 
+        public virtual ICollection<Student>? Students { get; set; }
     }
 }

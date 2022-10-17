@@ -1,3 +1,6 @@
+using InformaticsCertificationExamSystem.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//connect to DB
+builder.Services.AddDbContext<InformaticsCertificationExamSystem_DBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("dbconn")));
 
 var app = builder.Build();
 
