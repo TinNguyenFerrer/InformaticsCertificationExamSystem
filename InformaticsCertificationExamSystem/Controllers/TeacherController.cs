@@ -1,4 +1,4 @@
-﻿using InformaticsCertificationExamSystem.Service.Core;
+﻿using InformaticsCertificationExamSystem.DAL;
 using Microsoft.AspNetCore.Mvc;
 using InformaticsCertificationExamSystem.Models;
 using InformaticsCertificationExamSystem.Data;
@@ -32,7 +32,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                 Console.WriteLine("=====err: "+e);
                 return BadRequest(e.Message);
             }
-            return Ok();
+            return Ok(NewTeacher);
         }
 
        

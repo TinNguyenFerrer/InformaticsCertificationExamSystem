@@ -1,7 +1,7 @@
 ﻿using InformaticsCertificationExamSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using InformaticsCertificationExamSystem.Controllers;
-using InformaticsCertificationExamSystem.Service.Persistence.DependencyInjection;
+using InformaticsCertificationExamSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
