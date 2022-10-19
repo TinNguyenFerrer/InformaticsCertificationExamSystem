@@ -5,13 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InformaticsCertificationExamSystem.Models
 {
-    public class TestSchedule_TheoryTest
+    public class TheoryTestModel
     {
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity), Key]
+        [Column("TheoryTestID")]
         public int Id { get; set; }
-        public int TestScheduleId { get; set; }
-        public TestScheduleModel TestSchedule { get; set; }
-        public int TheoryTestId { get; set; }
-        public TheoryTestModel TheoryTest { get; set; }
+        [MaxLength(4)]
+        [Required]
+        public string ExamCode { get; set; }
+        [MaxLength(255)]
+        public string Path { get; set; }
+
     }
 }

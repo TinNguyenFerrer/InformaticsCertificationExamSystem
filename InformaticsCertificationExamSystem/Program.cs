@@ -1,5 +1,7 @@
-using InformaticsCertificationExamSystem.Models;
+﻿using InformaticsCertificationExamSystem.Data;
 using Microsoft.EntityFrameworkCore;
+using InformaticsCertificationExamSystem.Controllers;
+using InformaticsCertificationExamSystem.Service.Persistence.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,8 @@ builder.Services.AddSwaggerGen();
 
 //connect to DB
 builder.Services.AddDbContext<InformaticsCertificationExamSystem_DBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("dbconn")));
+//Add Repository
+builder.Services.AddRepository();
 
 var app = builder.Build();
 
@@ -27,5 +31,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

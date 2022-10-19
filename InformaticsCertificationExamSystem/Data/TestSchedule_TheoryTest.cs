@@ -3,15 +3,15 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace InformaticsCertificationExamSystem.Models
+namespace InformaticsCertificationExamSystem.Data
 {
     public class TestSchedule_TheoryTest
     {
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity), Key]
         public int Id { get; set; }
         public int TestScheduleId { get; set; }
-        public TestScheduleModel TestSchedule { get; set; }
+        public TestSchedule TestSchedule { get; set; }
         public int TheoryTestId { get; set; }
-        public TheoryTestModel TheoryTest { get; set; }
+        public TheoryTest TheoryTest { get; set; }
     }
 }
