@@ -3,7 +3,20 @@ using Microsoft.EntityFrameworkCore;
 using InformaticsCertificationExamSystem.Controllers;
 using InformaticsCertificationExamSystem.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("MyCORS",
+                          policy =>
+                          {
+                              policy.WithOrigins("*")
+                                                  .AllowAnyHeader()
+                                                  .AllowAnyMethod();
+                          });
+});
+
 
 // Add services to the container.
 
@@ -16,8 +29,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<InformaticsCertificationExamSystem_DBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("dbconn")));
 //Add Repository
 builder.Services.AddRepository();
-
+// Add AutoMapper
+builder.Services.AddAutoMapper(typeof(Program));
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -25,10 +41,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseCors("MyCORS");
 
 app.MapControllers();
 

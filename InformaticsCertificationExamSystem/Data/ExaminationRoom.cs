@@ -21,7 +21,7 @@ namespace InformaticsCertificationExamSystem.Data
         [Required]
         public int Capacity { get; set; }
 
-        public virtual ICollection<Examination_ExaminationRoom> Examination_ExaminationRooms { get; set; }
+        public virtual ICollection<Examination_ExaminationRoom>? Examination_ExaminationRooms { get; set; }
 
 
 

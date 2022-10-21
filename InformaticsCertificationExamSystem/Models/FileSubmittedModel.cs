@@ -14,7 +14,7 @@ namespace InformaticsCertificationExamSystem.Models
         public int Id { get; set; }
         [MaxLength(4)]
         [Required]
-        public string Code { get; set; }
+        public string? Code { get; set; }
 
         [DefaultValue(false)]
         public Boolean FileWord { get; set; } = false;

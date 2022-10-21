@@ -24,6 +24,10 @@ namespace InformaticsCertificationExamSystem.Data
         public string IdentifierCode { get; set; }
 
         [MaxLength(20)]
+        [Required]
+        public string Password { get; set; }
+
+        [MaxLength(20)]
         public string PhoneNumber { get; set;}
 
         [Required]

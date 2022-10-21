@@ -12,8 +12,8 @@ namespace InformaticsCertificationExamSystem.Models
         public int Id { get; set; }
         [MaxLength(4)]
         [Required]
-        public string ExamCode { get; set; }
-        [MaxLength(255)]
+        //public string ExamCode { get; set; }
+        //[MaxLength(255)]
         public string Path { get; set; }
 
     }

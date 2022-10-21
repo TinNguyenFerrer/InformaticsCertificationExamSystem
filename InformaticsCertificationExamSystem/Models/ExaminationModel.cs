@@ -17,18 +17,18 @@ namespace InformaticsCertificationExamSystem.Models
         [Required]
         public string Name { get; set; }
 
-        [Column("ExaminationCode")]
-        [MaxLength(20)]
-        [Required]
-        public string Code { get; set; }
+        //[Column("ExaminationCode")]
+        //[MaxLength(20)]
+        //[Required]
+        //public string? Code { get; set; }
 
         [Column("StarTime")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         [Required]
         public DateTime StarTime { get; set; }
 
         [Column("EndTime")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         [Required]
         public DateTime EndTime { get; set; }
 
@@ -50,7 +50,7 @@ namespace InformaticsCertificationExamSystem.Models
         //public Boolean IsBlocked { get; set; }
 
         [Column("GradingDeadline")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         [Required]
         public DateTime GradingDeadline { get; set; }
 

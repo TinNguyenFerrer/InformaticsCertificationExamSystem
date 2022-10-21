@@ -27,7 +27,12 @@ namespace InformaticsCertificationExamSystem.Data
                 .WithOne(b => b.Teacher)
                 .HasForeignKey<Permission>(c => c.PermissionOfTeacherID);
 
-            //many to many
+            //===========
+            //modelBuilder.Entity<Examination>(b =>
+            //{
+            //    b.ToTable("Examination");
+            //    b.Property(x => x.Code).ValueGeneratedOnAdd().UseIdentityColumn(1200, 1);
+            //});
 
 
         }
