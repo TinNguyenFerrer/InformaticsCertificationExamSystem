@@ -49,8 +49,8 @@ namespace InformaticsCertificationExamSystem.Data
         public DbSet<TheoryTest> TheoryTests { get; set; }
         public DbSet<StudentType> StudentTypes { get; set; }
         public DbSet<Teacher_InconsistentMark> Teacher_InconsistentMarks { get; set; }
-        public DbSet<Examination_ExaminationRoom> Examination_ExaminationRooms { get; set; }
-        public DbSet<TestSchedule_TheoryTest> TestSchedule_TheoryTests { get; set; }
+        //public DbSet<Examination_ExaminationRoom> Examination_ExaminationRooms { get; set; }
+        //public DbSet<TestSchedule_TheoryTest> TestSchedule_TheoryTests { get; set; }
 
         public InformaticsCertificationExamSystem_DBContext()
         {

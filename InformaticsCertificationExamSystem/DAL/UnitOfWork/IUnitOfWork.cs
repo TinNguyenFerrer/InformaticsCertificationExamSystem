@@ -6,7 +6,7 @@ namespace InformaticsCertificationExamSystem.DAL
     {
         public InformaticsCertificationExamSystem_DBContext DbContext { get; }
         public IExaminationRepository ExaminationRepository { get; set; }
-        public IExamination_ExaminationRoomRepository Examination_ExaminationRoomRepository { get; set; }
+        //public IExamination_ExaminationRoomRepository Examination_ExaminationRoomRepository { get; set; }
         public IExaminationRoomRepository ExaminationRoomRepository { get; set; }
         public IFileSubmittedRepository FileSubmittedRepository { get; set; }
         public IFinalResultRepository FinalResultRepository { get; set; }

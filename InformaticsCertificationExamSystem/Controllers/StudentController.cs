@@ -9,39 +9,47 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ExaminationController : ControllerBase
+    public class StudentController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
         public readonly IMapper _mapper;
-        public ExaminationController(IUnitOfWork unitOfWork, IMapper mapper)
+        public StudentController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAllExamination()
+        public async Task<IActionResult> GetAllStudent()
         {
-            var AllExamination = _unitOfWork.ExaminationRepository.GetAll().ToList();
-            return Ok(AllExamination.ToArray());
+            var AllStudent = _unitOfWork.StudentRepository.GetAll().ToList();
+            return Ok(AllStudent);
         }
+
+        [HttpGet("GetAllByIdExamination")]
+        public async Task<IActionResult> GetAllStudentByIdExamination(int id)
+        {
+            var AllStudents = _unitOfWork.StudentRepository.GetAllByIdExamination(id);
+            return Ok(AllStudents.ToArray());
+        }
+
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAllExamination(int id)
+        public async Task<IActionResult> GetStudent(int id)
         {
 
-            var Examination = _unitOfWork.ExaminationRepository.GetByID(id);
-            if (Examination == null)
+            var Student = _unitOfWork.StudentRepository.GetByID(id);
+            if (Student == null)
             {
                 return NotFound();
             }
-            return Ok(Examination);
+            return Ok(Student);
         }
         [HttpPost]
-        public async Task<IActionResult> CreateNew(ExaminationModel NewExamination)
+        public async Task<IActionResult> CreateNew(StudentModel NewStudent)
         {
             try
             {
                 //Console.WriteLine(NewExamination.GradingDeadline);
-                _unitOfWork.ExaminationRepository.Insert(_mapper.Map<Examination>(NewExamination));
+                _unitOfWork.StudentRepository.Insert(_mapper.Map<Student>(NewStudent));
                 _unitOfWork.SaveChange();
                 return Ok();
             }
@@ -51,25 +59,25 @@ namespace InformaticsCertificationExamSystem.Controllers
             }
         }
         [HttpPut]
-        public async Task<IActionResult> UpdateExamination(ExaminationModel examination)
+        public async Task<IActionResult> UpdateStudent(StudentModel StudentUpdate)
         {
-            try {
-                _unitOfWork.ExaminationRepository.Update(_mapper.Map<Examination>(examination));
+            try
+            {
+                _unitOfWork.StudentRepository.Update(_mapper.Map<Student>(StudentUpdate));
                 _unitOfWork.SaveChange();
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e);
             }
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteExamination(int id)
+        public async Task<IActionResult> DeleteStudent(int id)
         {
             try
             {
-                _unitOfWork.ExaminationRepository.Delete(id);
-                Console.WriteLine("Xóa bài thi: "+id);
+                _unitOfWork.StudentRepository.Delete(id);
                 _unitOfWork.SaveChange();
                 return Ok();
             }

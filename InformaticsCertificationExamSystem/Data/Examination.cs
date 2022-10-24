@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace InformaticsCertificationExamSystem.Data
@@ -55,8 +56,8 @@ namespace InformaticsCertificationExamSystem.Data
         [Required]
         public DateTime GradingDeadline { get; set; }
 
-        public virtual ICollection<Examination_ExaminationRoom>? Examination_ExaminationRooms { get; set; }
-
-        public virtual ICollection<TestSchedule>? TestSchedules { get; set; }
+        
+        [JsonIgnore]
+        public virtual ICollection<Student>? Students { get; set; }
     }
 }

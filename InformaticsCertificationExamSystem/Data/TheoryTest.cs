@@ -17,6 +17,7 @@ namespace InformaticsCertificationExamSystem.Data
         public string Path { get; set; }
 
         public virtual ICollection<Student>? Students { get; set; }
-        public virtual ICollection<TestSchedule_TheoryTest>? TestSchedule_TheoryTests { get; set; }
+        public virtual Examination Examination { get; set; }
+        //public virtual ICollection<TestSchedule_TheoryTest>? TestSchedule_TheoryTests { get; set; }
     }
 }

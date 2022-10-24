@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using InformaticsCertificationExamSystem.Controllers;
 using InformaticsCertificationExamSystem.Services;
-
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,9 +31,13 @@ builder.Services.AddDbContext<InformaticsCertificationExamSystem_DBContext>(opti
 builder.Services.AddRepository();
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
+
+//tránh vòng lặp
+//builder.Services.AddControllers()
+//            .AddJsonOptions(o => o.JsonSerializerOptions
+//                .ReferenceHandler = ReferenceHandler.Preserve);
+
 var app = builder.Build();
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

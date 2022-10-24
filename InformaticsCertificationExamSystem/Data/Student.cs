@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace InformaticsCertificationExamSystem.Data
@@ -20,6 +21,15 @@ namespace InformaticsCertificationExamSystem.Data
 
         [Required]
         [MaxLength(255)]
+        [Column("BirthPlace")]
+        public string BirthPlace { get; set; }
+
+        [Required]
+        [Column("BirthDay")]
+        public DateTime BirthDay { get; set; }
+
+        [Required]
+        [MaxLength(255)]
         [DataType(DataType.EmailAddress, ErrorMessage = "Not a valid email address")]
         public string Email { get; set; }
 
@@ -28,18 +38,21 @@ namespace InformaticsCertificationExamSystem.Data
         public string PhoneNumber { get; set; }
 
         [MaxLength(20)]
-        public string IdentifierCode { get; set; }
+        public string? IdentifierCode { get; set; }
 
         [MaxLength(255)]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         [DefaultValue(0)]
         public int NumberOfCheats { get; set; }
-
+        [ForeignKey("Examination")]
+        public int ExaminationId { get; set; }
+        [JsonIgnore]
+        public Examination Examination { get; set; }
         public FinalResult? FinalResult { get; set; }
         public InconsistentMark? InconsistentMark { get; set; }
         public TheoryTest? TheoryTest { get; set; }
-        public StudentType StudentType { get; set; }
+        public StudentType? StudentType { get; set; }
         public FileSubmitted? FileSubmitted { get; set; }
         public TestSchedule? TestSchedule { get; set; }
     }

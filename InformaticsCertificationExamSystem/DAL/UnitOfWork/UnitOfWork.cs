@@ -7,7 +7,7 @@ namespace InformaticsCertificationExamSystem.DAL
     {
         public InformaticsCertificationExamSystem_DBContext DbContext { get; set; }
         public IExaminationRepository ExaminationRepository { get; set; }
-        public IExamination_ExaminationRoomRepository Examination_ExaminationRoomRepository { get; set; }
+        //public IExamination_ExaminationRoomRepository Examination_ExaminationRoomRepository { get; set; }
         public IExaminationRoomRepository ExaminationRoomRepository { get; set; }
         public IFileSubmittedRepository FileSubmittedRepository { get; set; }
         public IFinalResultRepository FinalResultRepository { get; set; }
@@ -23,7 +23,6 @@ namespace InformaticsCertificationExamSystem.DAL
 
         public UnitOfWork(InformaticsCertificationExamSystem_DBContext dbContext,
                           IExaminationRepository examinationRepository,
-                          IExamination_ExaminationRoomRepository examination_ExaminationRoomRepository,
                           IExaminationRoomRepository examinationRoomRepository,
                           IFileSubmittedRepository fileSubmittedRepository,
                           IFinalResultRepository finalResultRepository,
@@ -39,7 +38,7 @@ namespace InformaticsCertificationExamSystem.DAL
         {
             DbContext = dbContext;
             ExaminationRepository = examinationRepository;
-            Examination_ExaminationRoomRepository = examination_ExaminationRoomRepository;
+            //Examination_ExaminationRoomRepository = examination_ExaminationRoomRepository;
             ExaminationRoomRepository = examinationRoomRepository;
             FileSubmittedRepository = fileSubmittedRepository;
             FinalResultRepository = finalResultRepository;

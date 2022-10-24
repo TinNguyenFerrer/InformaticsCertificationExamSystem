@@ -17,6 +17,11 @@ namespace InformaticsCertificationExamSystem.Models
         [StringLength(250)]
         public string Name { get; set; }
 
+        [Column("Location")]
+        [Required(ErrorMessage = "Please enter Location")]
+        [StringLength(250)]
+        public string Location { get; set; }
+
         [Column("Capacity")]
         [Required]
         public int Capacity { get; set; }

@@ -10,6 +10,9 @@ namespace InformaticsCertificationExamSystem.Services
         {
             CreateMap<Teacher, TeacherModel>().ReverseMap();
             CreateMap<Examination, ExaminationModel>().ReverseMap();
+            CreateMap<Student, StudentModel>().ReverseMap();
+            CreateMap<ExaminationRoom, ExaminationRoomModel>().ReverseMap();
+            CreateMap<TestSchedule, TestScheduleModel>().ReverseMap();
         }
     }
 }

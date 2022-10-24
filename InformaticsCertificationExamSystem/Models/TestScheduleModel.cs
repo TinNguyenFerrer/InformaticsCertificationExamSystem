@@ -27,7 +27,7 @@ namespace InformaticsCertificationExamSystem.Models
         [Required]
         public DateTime EndTime { get; set; }
         
-        public virtual ICollection<StudentModel> Students { get; set; }
+        public virtual ICollection<StudentModel>? Students { get; set; }
         public int  ExaminationId { get; set; }
         
 

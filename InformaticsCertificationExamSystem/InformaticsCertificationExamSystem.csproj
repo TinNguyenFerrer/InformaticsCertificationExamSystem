@@ -7,12 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DAL\Examination_ExaminationRoomRepository\**" />
     <Compile Remove="Services\Core\**" />
     <Compile Remove="Services\Persistence\**" />
+    <Content Remove="DAL\Examination_ExaminationRoomRepository\**" />
     <Content Remove="Services\Core\**" />
     <Content Remove="Services\Persistence\**" />
+    <EmbeddedResource Remove="DAL\Examination_ExaminationRoomRepository\**" />
     <EmbeddedResource Remove="Services\Core\**" />
     <EmbeddedResource Remove="Services\Persistence\**" />
+    <None Remove="DAL\Examination_ExaminationRoomRepository\**" />
     <None Remove="Services\Core\**" />
     <None Remove="Services\Persistence\**" />
   </ItemGroup>

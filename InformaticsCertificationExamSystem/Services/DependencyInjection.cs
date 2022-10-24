@@ -8,7 +8,7 @@ namespace InformaticsCertificationExamSystem.Services
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IExaminationRepository, ExaminationRepository>();
-            services.AddScoped<IExamination_ExaminationRoomRepository, Examination_ExaminationRoomRepository>();
+            //services.AddScoped<IExamination_ExaminationRoomRepository, Examination_ExaminationRoomRepository>();
             services.AddScoped<IExaminationRoomRepository, ExaminationRoomRepository>();
             services.AddScoped<IFileSubmittedRepository, FileSubmittedRepository>();
             services.AddScoped<IFinalResultRepository, FinalResultRepository>();
