@@ -4,6 +4,7 @@ using InformaticsCertificationExamSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InformaticsCertificationExamSystem.Migrations
 {
     [DbContext(typeof(InformaticsCertificationExamSystem_DBContext))]
-    partial class InformaticsCertificationExamSystem_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20221024161612_modify_DB9")]
+    partial class modify_DB9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -413,9 +415,6 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("EndTime");
 
-                    b.Property<int?>("ExaminationId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ExaminationRoomId")
                         .HasColumnType("int");
 
@@ -432,6 +431,9 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ExaminationRoomId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("TestSchedule");
                 });

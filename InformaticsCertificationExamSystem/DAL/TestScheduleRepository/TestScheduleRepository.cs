@@ -9,9 +9,7 @@ namespace InformaticsCertificationExamSystem.DAL
         IEnumerable<TestSchedule> ITestScheduleRepository.GetAllByIdExamination(int id)
         {
             var TestSchedules = from testschedules in this.DbContext.TestSchedules
-                                //join examination in this.DbContext.Examinations 
-
-                                //where testschedules.Examination.Id == id
+                                where testschedules.ExaminationId == id
                                 select testschedules;
                 return TestSchedules.ToList();
         }

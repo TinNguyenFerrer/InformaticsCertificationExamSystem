@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace InformaticsCertificationExamSystem.Data
 {
     [Table("TestSchedule")]
-    [Index(nameof(Name), IsUnique = true)]
+    //[Index(nameof(Name), IsUnique = true)]
     public class TestSchedule
     {
         [Column("TestScheduleID")]
@@ -27,14 +27,14 @@ namespace InformaticsCertificationExamSystem.Data
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}", ApplyFormatInEditMode = true)]
         [Required]
         public DateTime EndTime { get; set; }
-        
+        [JsonIgnore]
         public virtual ICollection<Student>? Students { get; set; }
-        //[ForeignKey("Examination")]
-        //public int ExaminationId { get; set;}
-        //[JsonIgnore]
+        [ForeignKey("Examination")]
+        public int? ExaminationId { get; set; }
+        [JsonIgnore]
         //[ForeignKey("ExaminationId")]
         //public virtual Examination Examination { get; set; }
-        public virtual ExaminationRoom ExaminationRoom { get; set; }
+        public virtual ExaminationRoom? ExaminationRoom { get; set; }
 
     }
 }

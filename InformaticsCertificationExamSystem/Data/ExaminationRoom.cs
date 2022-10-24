@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace InformaticsCertificationExamSystem.Data
@@ -25,7 +26,7 @@ namespace InformaticsCertificationExamSystem.Data
         [Column("Capacity")]
         [Required]
         public int Capacity { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection<TestSchedule>? TestSchedule { get; set; }
 
 
