@@ -27,7 +27,7 @@ namespace InformaticsCertificationExamSystem.Data
         [Required]
         public int Capacity { get; set; }
         [JsonIgnore]
-        public virtual ICollection<TestSchedule>? TestSchedule { get; set; }
+        public virtual ICollection<ExaminationRoom_TestSchedule>? ExaminationRoom_TestSchedules{ get; set; }
 
 
 

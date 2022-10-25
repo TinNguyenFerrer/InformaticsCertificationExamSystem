@@ -16,11 +16,13 @@ namespace InformaticsCertificationExamSystem.Services
             services.AddScoped<IPermissionRepository, PermissionRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IStudentTypeRepository, StudentTypeRepository>();
-            services.AddScoped<ITeacher_InconsistentMarkRepository, Teacher_InconsistentMarkRepository>();
+            services.AddScoped<ISupervisorRepository, SupervisorRepository>();
             services.AddScoped<ITeacherRepository, TeacherRepository>();
             services.AddScoped<ITestSchedule_TheoryTestRepository, TestSchedule_TheoryTestRepository>();
             services.AddScoped<ITestScheduleRepository, TestScheduleRepository>();
             services.AddScoped<ITheoryTestRepository, TheoryTestRepository>();
+            services.AddScoped<ISupervisorRepository, SupervisorRepository>();
+            services.AddScoped<IExaminationRoom_TestScheduleRepository, ExaminationRoom_TestScheduleRepository>();
             return services;
         }
     }

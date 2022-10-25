@@ -14,5 +14,12 @@ namespace InformaticsCertificationExamSystem.DAL
                            select students;
             return Students.ToList();
         }
+        //public IEnumerable<Student> GetAllByIdTestSchedule(int Id)
+        //{
+        //    var Students = from students in this.DbContext.Students
+        //                   where students.TestSchedule.Id == Id
+        //                   select students;
+        //    return Students.ToList();
+        //}
     }
 }

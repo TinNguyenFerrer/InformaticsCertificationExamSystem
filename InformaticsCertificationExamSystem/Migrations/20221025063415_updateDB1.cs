@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InformaticsCertificationExamSystem.Migrations
 {
-    public partial class InitBD : Migration
+    public partial class updateDB1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,7 +16,6 @@ namespace InformaticsCertificationExamSystem.Migrations
                     ExaminationID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ExaminationCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     StarTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
@@ -36,6 +35,7 @@ namespace InformaticsCertificationExamSystem.Migrations
                     ExaminationRoomID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     Capacity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -57,6 +57,18 @@ namespace InformaticsCertificationExamSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Supervisor",
+                columns: table => new
+                {
+                    SupervisorID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Supervisor", x => x.SupervisorID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Teacher",
                 columns: table => new
                 {
@@ -64,6 +76,7 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FullName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     IdentifierCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
@@ -80,11 +93,18 @@ namespace InformaticsCertificationExamSystem.Migrations
                     TheoryTestID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ExamCode = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
-                    Path = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                    Path = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ExaminationId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TheoryTests", x => x.TheoryTestID);
+                    table.ForeignKey(
+                        name: "FK_TheoryTests_Examination_ExaminationId",
+                        column: x => x.ExaminationId,
+                        principalTable: "Examination",
+                        principalColumn: "ExaminationID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,43 +116,17 @@ namespace InformaticsCertificationExamSystem.Migrations
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     StarTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExaminationId = table.Column<int>(type: "int", nullable: false)
+                    ExaminationId = table.Column<int>(type: "int", nullable: true),
+                    SupervisorId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TestSchedule", x => x.TestScheduleID);
                     table.ForeignKey(
-                        name: "FK_TestSchedule_Examination_ExaminationId",
-                        column: x => x.ExaminationId,
-                        principalTable: "Examination",
-                        principalColumn: "ExaminationID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Examination_ExaminationRooms",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ExaminationID = table.Column<int>(type: "int", nullable: false),
-                    ExaminationRoomID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Examination_ExaminationRooms", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Examination_ExaminationRooms_Examination_ExaminationID",
-                        column: x => x.ExaminationID,
-                        principalTable: "Examination",
-                        principalColumn: "ExaminationID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Examination_ExaminationRooms_ExaminationRoom_ExaminationRoomID",
-                        column: x => x.ExaminationRoomID,
-                        principalTable: "ExaminationRoom",
-                        principalColumn: "ExaminationRoomID",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_TestSchedule_Supervisor_SupervisorId",
+                        column: x => x.SupervisorId,
+                        principalTable: "Supervisor",
+                        principalColumn: "SupervisorID");
                 });
 
             migrationBuilder.CreateTable(
@@ -158,68 +152,105 @@ namespace InformaticsCertificationExamSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SupervisorTeacher",
+                columns: table => new
+                {
+                    SupervisorsId = table.Column<int>(type: "int", nullable: false),
+                    TeachersId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SupervisorTeacher", x => new { x.SupervisorsId, x.TeachersId });
+                    table.ForeignKey(
+                        name: "FK_SupervisorTeacher_Supervisor_SupervisorsId",
+                        column: x => x.SupervisorsId,
+                        principalTable: "Supervisor",
+                        principalColumn: "SupervisorID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SupervisorTeacher_Teacher_TeachersId",
+                        column: x => x.TeachersId,
+                        principalTable: "Teacher",
+                        principalColumn: "TeacherID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExaminationRoom_TestSchedule",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ExaminationRoomId = table.Column<int>(type: "int", nullable: false),
+                    TestScheduleId = table.Column<int>(type: "int", nullable: false),
+                    SupervisorID = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExaminationRoom_TestSchedule", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_ExaminationRoom_TestSchedule_ExaminationRoom_ExaminationRoomId",
+                        column: x => x.ExaminationRoomId,
+                        principalTable: "ExaminationRoom",
+                        principalColumn: "ExaminationRoomID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExaminationRoom_TestSchedule_Supervisor_SupervisorID",
+                        column: x => x.SupervisorID,
+                        principalTable: "Supervisor",
+                        principalColumn: "SupervisorID",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_ExaminationRoom_TestSchedule_TestSchedule_TestScheduleId",
+                        column: x => x.TestScheduleId,
+                        principalTable: "TestSchedule",
+                        principalColumn: "TestScheduleID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Student",
                 columns: table => new
                 {
                     StudentID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    BirthPlace = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    BirthDay = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
-                    IdentifierCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    IdentifierCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     NumberOfCheats = table.Column<int>(type: "int", nullable: false),
-                    TheoryTestId = table.Column<int>(type: "int", nullable: false),
-                    StudentTypeId = table.Column<int>(type: "int", nullable: false),
-                    TestScheduleId = table.Column<int>(type: "int", nullable: false)
+                    ExaminationId = table.Column<int>(type: "int", nullable: false),
+                    TheoryTestId = table.Column<int>(type: "int", nullable: true),
+                    StudentTypeId = table.Column<int>(type: "int", nullable: true),
+                    TestScheduleId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Student", x => x.StudentID);
                     table.ForeignKey(
+                        name: "FK_Student_Examination_ExaminationId",
+                        column: x => x.ExaminationId,
+                        principalTable: "Examination",
+                        principalColumn: "ExaminationID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Student_StudentType_StudentTypeId",
                         column: x => x.StudentTypeId,
                         principalTable: "StudentType",
-                        principalColumn: "StudentTypeID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "StudentTypeID");
                     table.ForeignKey(
                         name: "FK_Student_TestSchedule_TestScheduleId",
                         column: x => x.TestScheduleId,
                         principalTable: "TestSchedule",
-                        principalColumn: "TestScheduleID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "TestScheduleID");
                     table.ForeignKey(
                         name: "FK_Student_TheoryTests_TheoryTestId",
                         column: x => x.TheoryTestId,
                         principalTable: "TheoryTests",
-                        principalColumn: "TheoryTestID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TestSchedule_TheoryTests",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TestScheduleId = table.Column<int>(type: "int", nullable: false),
-                    TheoryTestId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TestSchedule_TheoryTests", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TestSchedule_TheoryTests_TestSchedule_TestScheduleId",
-                        column: x => x.TestScheduleId,
-                        principalTable: "TestSchedule",
-                        principalColumn: "TestScheduleID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TestSchedule_TheoryTests_TheoryTests_TheoryTestId",
-                        column: x => x.TheoryTestId,
-                        principalTable: "TheoryTests",
-                        principalColumn: "TheoryTestID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "TheoryTestID");
                 });
 
             migrationBuilder.CreateTable(
@@ -319,20 +350,27 @@ namespace InformaticsCertificationExamSystem.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Examination_ExaminationRooms_ExaminationID",
-                table: "Examination_ExaminationRooms",
-                column: "ExaminationID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Examination_ExaminationRooms_ExaminationRoomID",
-                table: "Examination_ExaminationRooms",
-                column: "ExaminationRoomID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ExaminationRoom_Name",
                 table: "ExaminationRoom",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExaminationRoom_TestSchedule_ExaminationRoomId",
+                table: "ExaminationRoom_TestSchedule",
+                column: "ExaminationRoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExaminationRoom_TestSchedule_SupervisorID",
+                table: "ExaminationRoom_TestSchedule",
+                column: "SupervisorID",
+                unique: true,
+                filter: "[SupervisorID] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExaminationRoom_TestSchedule_TestScheduleId",
+                table: "ExaminationRoom_TestSchedule",
+                column: "TestScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FileSubmitted_Code",
@@ -365,10 +403,16 @@ namespace InformaticsCertificationExamSystem.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Student_ExaminationId",
+                table: "Student",
+                column: "ExaminationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Student_IdentifierCode",
                 table: "Student",
                 column: "IdentifierCode",
-                unique: true);
+                unique: true,
+                filter: "[IdentifierCode] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Student_StudentTypeId",
@@ -384,6 +428,11 @@ namespace InformaticsCertificationExamSystem.Migrations
                 name: "IX_Student_TheoryTestId",
                 table: "Student",
                 column: "TheoryTestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SupervisorTeacher_TeachersId",
+                table: "SupervisorTeacher",
+                column: "TeachersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Teacher_IdentifierCode",
@@ -402,31 +451,20 @@ namespace InformaticsCertificationExamSystem.Migrations
                 column: "TeacherID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TestSchedule_ExaminationId",
+                name: "IX_TestSchedule_SupervisorId",
                 table: "TestSchedule",
+                column: "SupervisorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TheoryTests_ExaminationId",
+                table: "TheoryTests",
                 column: "ExaminationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestSchedule_Name",
-                table: "TestSchedule",
-                column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestSchedule_TheoryTests_TestScheduleId",
-                table: "TestSchedule_TheoryTests",
-                column: "TestScheduleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TestSchedule_TheoryTests_TheoryTestId",
-                table: "TestSchedule_TheoryTests",
-                column: "TheoryTestId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Examination_ExaminationRooms");
+                name: "ExaminationRoom_TestSchedule");
 
             migrationBuilder.DropTable(
                 name: "FileSubmitted");
@@ -438,10 +476,10 @@ namespace InformaticsCertificationExamSystem.Migrations
                 name: "Permission");
 
             migrationBuilder.DropTable(
-                name: "Teacher_InconsistentMarks");
+                name: "SupervisorTeacher");
 
             migrationBuilder.DropTable(
-                name: "TestSchedule_TheoryTests");
+                name: "Teacher_InconsistentMarks");
 
             migrationBuilder.DropTable(
                 name: "ExaminationRoom");
@@ -463,6 +501,9 @@ namespace InformaticsCertificationExamSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "TheoryTests");
+
+            migrationBuilder.DropTable(
+                name: "Supervisor");
 
             migrationBuilder.DropTable(
                 name: "Examination");

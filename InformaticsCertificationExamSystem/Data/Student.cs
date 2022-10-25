@@ -54,7 +54,9 @@ namespace InformaticsCertificationExamSystem.Data
         public TheoryTest? TheoryTest { get; set; }
         public StudentType? StudentType { get; set; }
         public FileSubmitted? FileSubmitted { get; set; }
+
+        public int? ExaminationRoom_TestScheduleId { get; set; }
         [JsonIgnore]
-        public TestSchedule? TestSchedule { get; set; }
+        public ExaminationRoom_TestSchedule? ExaminationRoom_TestSchedule { get; set; }
     }
 }

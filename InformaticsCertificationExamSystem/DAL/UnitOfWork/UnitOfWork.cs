@@ -15,12 +15,13 @@ namespace InformaticsCertificationExamSystem.DAL
         public IPermissionRepository PermissionRepository { get; set; }
         public IStudentRepository StudentRepository { get; set; }
         public IStudentTypeRepository StudentTypeRepository { get; set; }
-        public ITeacher_InconsistentMarkRepository Teacher_InconsistentMarkRepository { get; set; }
+        public ISupervisorRepository Teacher_InconsistentMarkRepository { get; set; }
         public ITeacherRepository TeacherRepository { get; set; }
         public ITestSchedule_TheoryTestRepository TestSchedule_TheoryTestRepository { get; set; }
         public ITestScheduleRepository TestScheduleRepository { get; set; }
         public ITheoryTestRepository TheoryTestRepository { get; set; }
-
+        public ISupervisorRepository SupervisorRepository { get; set; }
+        public IExaminationRoom_TestScheduleRepository ExaminationRoom_TestScheduleRepository { get; set; }
         public UnitOfWork(InformaticsCertificationExamSystem_DBContext dbContext,
                           IExaminationRepository examinationRepository,
                           IExaminationRoomRepository examinationRoomRepository,
@@ -30,11 +31,13 @@ namespace InformaticsCertificationExamSystem.DAL
                           IPermissionRepository permissionRepository,
                           IStudentRepository studentRepository,
                           IStudentTypeRepository studentTypeRepository,
-                          ITeacher_InconsistentMarkRepository teacherInconsistentMarkRepository,
+                          ISupervisorRepository teacherInconsistentMarkRepository,
                           ITeacherRepository teacherRepository,
                           ITestSchedule_TheoryTestRepository testSchedule_TheoryTestRepository,
                           ITestScheduleRepository testScheduleRepository,
-                          ITheoryTestRepository theoryTestRepository)
+                          ITheoryTestRepository theoryTestRepository,
+                          ISupervisorRepository supervisorRepository,
+                          IExaminationRoom_TestScheduleRepository examinationRoom_TestScheduleRepository)
         {
             DbContext = dbContext;
             ExaminationRepository = examinationRepository;
@@ -51,6 +54,8 @@ namespace InformaticsCertificationExamSystem.DAL
             TestSchedule_TheoryTestRepository = testSchedule_TheoryTestRepository;
             TestScheduleRepository = testScheduleRepository;
             TheoryTestRepository = theoryTestRepository;
+            SupervisorRepository = supervisorRepository;
+            ExaminationRoom_TestScheduleRepository = examinationRoom_TestScheduleRepository;
         }
 
         public void Dispose()
@@ -63,6 +68,5 @@ namespace InformaticsCertificationExamSystem.DAL
             return DbContext.SaveChanges();
         }
     }
-
 
 }

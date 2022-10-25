@@ -31,6 +31,12 @@ namespace InformaticsCertificationExamSystem.Controllers
             var AllStudents = _unitOfWork.StudentRepository.GetAllByIdExamination(id);
             return Ok(AllStudents.ToArray());
         }
+        [HttpGet("GetAllByIdTestSchedule")]
+        //public async Task<IActionResult> GetAllByIdTestSchedule(int id)
+        //{
+        //    var AllStudents = _unitOfWork.StudentRepository.GetAllByIdTestSchedule(id);
+        //    return Ok(AllStudents.ToArray());
+        //}
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetStudent(int id)

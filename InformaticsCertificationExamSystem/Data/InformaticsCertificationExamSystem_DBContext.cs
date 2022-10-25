@@ -27,6 +27,16 @@ namespace InformaticsCertificationExamSystem.Data
                 .WithOne(b => b.Teacher)
                 .HasForeignKey<Permission>(c => c.PermissionOfTeacherID);
 
+            modelBuilder.Entity<ExaminationRoom_TestSchedule>()
+                .HasOne<Supervisor>(a => a.Supervisor)
+                .WithOne(b => b.ExaminationRoom_TestSchedule)
+                .HasForeignKey<ExaminationRoom_TestSchedule>(c => c.SupervisorID)
+                .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<ExaminationRoom_TestSchedule>()
+                .HasMany<Student>(a => a.Students)
+                .WithOne(b => b.ExaminationRoom_TestSchedule)
+                .HasForeignKey(c => c.ExaminationRoom_TestScheduleId)
+                .OnDelete(DeleteBehavior.SetNull);
             //===========
             //modelBuilder.Entity<Examination>(b =>
             //{
@@ -48,7 +58,9 @@ namespace InformaticsCertificationExamSystem.Data
         public DbSet<TestSchedule> TestSchedules { get; set; }
         public DbSet<TheoryTest> TheoryTests { get; set; }
         public DbSet<StudentType> StudentTypes { get; set; }
+        public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Teacher_InconsistentMark> Teacher_InconsistentMarks { get; set; }
+        public DbSet<ExaminationRoom_TestSchedule> ExaminationRoom_TestSchedule { get; set; }
         //public DbSet<Examination_ExaminationRoom> Examination_ExaminationRooms { get; set; }
         //public DbSet<TestSchedule_TheoryTest> TestSchedule_TheoryTests { get; set; }
 

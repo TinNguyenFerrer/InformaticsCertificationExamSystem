@@ -39,7 +39,7 @@ namespace InformaticsCertificationExamSystem.Data
         public string Address { get; set; }
 
         public virtual Permission? Permission { get; set; }
-
+        public ICollection<Supervisor>? Supervisors { get; set; }
        
         public virtual ICollection<Teacher_InconsistentMark>? Teacher_InconsistentMarks { get; set; }
 

@@ -14,11 +14,13 @@ namespace InformaticsCertificationExamSystem.DAL
         public IPermissionRepository PermissionRepository { get; set; }
         public IStudentRepository StudentRepository { get; set; }
         public IStudentTypeRepository StudentTypeRepository { get; set; }
-        public ITeacher_InconsistentMarkRepository Teacher_InconsistentMarkRepository { get; set; }
+        public ISupervisorRepository Teacher_InconsistentMarkRepository { get; set; }
         public ITeacherRepository TeacherRepository { get; set; }
         public ITestSchedule_TheoryTestRepository TestSchedule_TheoryTestRepository { get; set; }
         public ITestScheduleRepository TestScheduleRepository { get; set; }
         public ITheoryTestRepository TheoryTestRepository { get; set; }
+        public ISupervisorRepository SupervisorRepository { get; set; }
+        public IExaminationRoom_TestScheduleRepository ExaminationRoom_TestScheduleRepository { get; set; }
         public int SaveChange();
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InformaticsCertificationExamSystem.Migrations
 {
     [DbContext(typeof(InformaticsCertificationExamSystem_DBContext))]
-    [Migration("20221022084554_modify_student1")]
-    partial class modify_student1
+    [Migration("20221025063633_updateDB2")]
+    partial class updateDB2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -70,29 +70,6 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.ToTable("Examination");
                 });
 
-            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Examination_ExaminationRoom", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("ExaminationID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExaminationRoomID")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExaminationID");
-
-                    b.HasIndex("ExaminationRoomID");
-
-                    b.ToTable("Examination_ExaminationRooms");
-                });
-
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.ExaminationRoom", b =>
                 {
                     b.Property<int>("Id")
@@ -106,6 +83,12 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Capacity");
 
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)")
+                        .HasColumnName("Location");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -118,6 +101,37 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .IsUnique();
 
                     b.ToTable("ExaminationRoom");
+                });
+
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.ExaminationRoom_TestSchedule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ExaminationRoomId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SupervisorID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TestScheduleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExaminationRoomId");
+
+                    b.HasIndex("SupervisorID")
+                        .IsUnique()
+                        .HasFilter("[SupervisorID] IS NOT NULL");
+
+                    b.HasIndex("TestScheduleId");
+
+                    b.ToTable("ExaminationRoom_TestSchedule");
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.FileSubmitted", b =>
@@ -262,10 +276,23 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<DateTime>("BirthDay")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("BirthDay");
+
+                    b.Property<string>("BirthPlace")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("BirthPlace");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("ExaminationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("IdentifierCode")
                         .HasMaxLength(20)
@@ -281,7 +308,6 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -290,7 +316,7 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
-                    b.Property<int>("StudentTypeId")
+                    b.Property<int?>("StudentTypeId")
                         .HasColumnType("int");
 
                     b.Property<int?>("TestScheduleId")
@@ -300,6 +326,8 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ExaminationId");
 
                     b.HasIndex("IdentifierCode")
                         .IsUnique()
@@ -332,6 +360,20 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StudentType");
+                });
+
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Supervisor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("SupervisorID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Supervisor");
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Teacher", b =>
@@ -418,7 +460,7 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("EndTime");
 
-                    b.Property<int>("ExaminationId")
+                    b.Property<int?>("ExaminationId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -433,35 +475,7 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ExaminationId");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("TestSchedule");
-                });
-
-            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TestSchedule_TheoryTest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("TestScheduleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TheoryTestId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TestScheduleId");
-
-                    b.HasIndex("TheoryTestId");
-
-                    b.ToTable("TestSchedule_TheoryTests");
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TheoryTest", b =>
@@ -478,6 +492,9 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)");
 
+                    b.Property<int>("ExaminationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Path")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -485,26 +502,50 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExaminationId");
+
                     b.ToTable("TheoryTests");
                 });
 
-            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Examination_ExaminationRoom", b =>
+            modelBuilder.Entity("SupervisorTeacher", b =>
                 {
-                    b.HasOne("InformaticsCertificationExamSystem.Data.Examination", "Examination")
-                        .WithMany("Examination_ExaminationRooms")
-                        .HasForeignKey("ExaminationID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("SupervisorsId")
+                        .HasColumnType("int");
 
+                    b.Property<int>("TeachersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SupervisorsId", "TeachersId");
+
+                    b.HasIndex("TeachersId");
+
+                    b.ToTable("SupervisorTeacher");
+                });
+
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.ExaminationRoom_TestSchedule", b =>
+                {
                     b.HasOne("InformaticsCertificationExamSystem.Data.ExaminationRoom", "ExaminationRoom")
-                        .WithMany("Examination_ExaminationRooms")
-                        .HasForeignKey("ExaminationRoomID")
+                        .WithMany("ExaminationRoom_TestSchedules")
+                        .HasForeignKey("ExaminationRoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Examination");
+                    b.HasOne("InformaticsCertificationExamSystem.Data.Supervisor", "Supervisor")
+                        .WithOne("ExaminationRoom_TestSchedule")
+                        .HasForeignKey("InformaticsCertificationExamSystem.Data.ExaminationRoom_TestSchedule", "SupervisorID")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("InformaticsCertificationExamSystem.Data.TestSchedule", "TestSchedule")
+                        .WithMany("ExaminationRoom_TestSchedules")
+                        .HasForeignKey("TestScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ExaminationRoom");
+
+                    b.Navigation("Supervisor");
+
+                    b.Navigation("TestSchedule");
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.FileSubmitted", b =>
@@ -553,11 +594,15 @@ namespace InformaticsCertificationExamSystem.Migrations
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Student", b =>
                 {
-                    b.HasOne("InformaticsCertificationExamSystem.Data.StudentType", "StudentType")
+                    b.HasOne("InformaticsCertificationExamSystem.Data.Examination", "Examination")
                         .WithMany("Students")
-                        .HasForeignKey("StudentTypeId")
+                        .HasForeignKey("ExaminationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("InformaticsCertificationExamSystem.Data.StudentType", "StudentType")
+                        .WithMany("Students")
+                        .HasForeignKey("StudentTypeId");
 
                     b.HasOne("InformaticsCertificationExamSystem.Data.TestSchedule", "TestSchedule")
                         .WithMany("Students")
@@ -566,6 +611,8 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.HasOne("InformaticsCertificationExamSystem.Data.TheoryTest", "TheoryTest")
                         .WithMany("Students")
                         .HasForeignKey("TheoryTestId");
+
+                    b.Navigation("Examination");
 
                     b.Navigation("StudentType");
 
@@ -593,10 +640,10 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TestSchedule", b =>
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TheoryTest", b =>
                 {
                     b.HasOne("InformaticsCertificationExamSystem.Data.Examination", "Examination")
-                        .WithMany("TestSchedules")
+                        .WithMany()
                         .HasForeignKey("ExaminationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -604,35 +651,29 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Navigation("Examination");
                 });
 
-            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TestSchedule_TheoryTest", b =>
+            modelBuilder.Entity("SupervisorTeacher", b =>
                 {
-                    b.HasOne("InformaticsCertificationExamSystem.Data.TestSchedule", "TestSchedule")
-                        .WithMany("TestSchedule_TheoryTests")
-                        .HasForeignKey("TestScheduleId")
+                    b.HasOne("InformaticsCertificationExamSystem.Data.Supervisor", null)
+                        .WithMany()
+                        .HasForeignKey("SupervisorsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InformaticsCertificationExamSystem.Data.TheoryTest", "TheoryTest")
-                        .WithMany("TestSchedule_TheoryTests")
-                        .HasForeignKey("TheoryTestId")
+                    b.HasOne("InformaticsCertificationExamSystem.Data.Teacher", null)
+                        .WithMany()
+                        .HasForeignKey("TeachersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("TestSchedule");
-
-                    b.Navigation("TheoryTest");
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Examination", b =>
                 {
-                    b.Navigation("Examination_ExaminationRooms");
-
-                    b.Navigation("TestSchedules");
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.ExaminationRoom", b =>
                 {
-                    b.Navigation("Examination_ExaminationRooms");
+                    b.Navigation("ExaminationRoom_TestSchedules");
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.InconsistentMark", b =>
@@ -654,6 +695,11 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Navigation("Students");
                 });
 
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Supervisor", b =>
+                {
+                    b.Navigation("ExaminationRoom_TestSchedule");
+                });
+
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Teacher", b =>
                 {
                     b.Navigation("Permission");
@@ -663,16 +709,14 @@ namespace InformaticsCertificationExamSystem.Migrations
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TestSchedule", b =>
                 {
-                    b.Navigation("Students");
+                    b.Navigation("ExaminationRoom_TestSchedules");
 
-                    b.Navigation("TestSchedule_TheoryTests");
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TheoryTest", b =>
                 {
                     b.Navigation("Students");
-
-                    b.Navigation("TestSchedule_TheoryTests");
                 });
 #pragma warning restore 612, 618
         }
