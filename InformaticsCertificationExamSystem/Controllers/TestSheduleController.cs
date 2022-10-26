@@ -120,17 +120,7 @@ namespace InformaticsCertificationExamSystem.Controllers
         }
 
         //======================--------------------------------------=====================
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetRoom(int id)
-        {
-
-            var Room = _unitOfWork.ExaminationRoomRepository.GetByID(id);
-            if (Room == null)
-            {
-                return NotFound();
-            }
-            return Ok(Room);
-        }
+        
 
 
     }

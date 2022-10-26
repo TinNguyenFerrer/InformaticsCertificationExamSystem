@@ -490,18 +490,16 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("ExamCode")
-                        .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
-
                     b.Property<int>("ExaminationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Path")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("blocked")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -612,7 +610,7 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .WithMany("Students")
                         .HasForeignKey("StudentTypeId");
 
-                    b.HasOne("InformaticsCertificationExamSystem.Data.TestSchedule", null)
+                    b.HasOne("InformaticsCertificationExamSystem.Data.TestSchedule", "TestSchedule")
                         .WithMany("Students")
                         .HasForeignKey("TestScheduleId");
 
@@ -625,6 +623,8 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Navigation("ExaminationRoom_TestSchedule");
 
                     b.Navigation("StudentType");
+
+                    b.Navigation("TestSchedule");
 
                     b.Navigation("TheoryTest");
                 });

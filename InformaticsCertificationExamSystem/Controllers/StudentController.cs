@@ -92,5 +92,13 @@ namespace InformaticsCertificationExamSystem.Controllers
                 return BadRequest("can not delete!");
             }
         }
+        [HttpGet("GetAllByRoomAndTestSchedule")]
+        public IActionResult GetAllByRoomAndTestSchedule(int ExamRom_TestScheid)
+        {
+            var Students = from student in _unitOfWork.DbContext.Students
+                           where student.ExaminationRoom_TestScheduleId == ExamRom_TestScheid
+                           select student;
+            return Ok(Students);
+        }
     }
 }
