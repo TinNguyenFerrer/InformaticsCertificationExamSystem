@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,6 +38,8 @@ namespace InformaticsCertificationExamSystem.Data
 
         [MaxLength(500)]
         public string Address { get; set; }
+        [DefaultValue(false)]
+        public Boolean Locked { get; set; } = false;
 
         public virtual Permission? Permission { get; set; }
         public ICollection<Supervisor>? Supervisors { get; set; }

@@ -33,7 +33,7 @@ namespace InformaticsCertificationExamSystem.Data
         public int? ExaminationId { get; set; }
         [JsonIgnore]
         //[ForeignKey("ExaminationId")]
-        //public virtual Examination Examination { get; set; }
+        public virtual Examination? Examination { get; set; }
         //public Supervisor? Supervisor { get; set; }
         public ICollection<ExaminationRoom_TestSchedule>? ExaminationRoom_TestSchedules { get; set; }
 

@@ -77,5 +77,27 @@ namespace InformaticsCertificationExamSystem.Controllers
                 return BadRequest("can not delete!");
             }
         }
+
+        [HttpGet("LockExaminationRoom")]
+        public IActionResult LockExaminationRoom(int id)
+        {
+            if (_unitOfWork.ExaminationRoomRepository.LockExaminationRoom(id))
+            {
+                _unitOfWork.SaveChange();
+                return Ok();
+            }
+            return BadRequest("Not found Room  ");
+        }
+
+        [HttpGet("UnLockExaminationRoom")]
+        public IActionResult UnLockExaminationRoom(int id)
+        {
+            if (_unitOfWork.ExaminationRoomRepository.UnLockExaminationRoom(id))
+            {
+                _unitOfWork.SaveChange();
+                return Ok();
+            }
+            return BadRequest("Not found Room  ");
+        }
     }
 }

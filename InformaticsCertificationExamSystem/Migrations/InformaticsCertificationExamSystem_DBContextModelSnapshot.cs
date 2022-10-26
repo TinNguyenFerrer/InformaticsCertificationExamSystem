@@ -87,6 +87,9 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasColumnType("nvarchar(250)")
                         .HasColumnName("Location");
 
+                    b.Property<bool>("Locked")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -409,6 +412,9 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<bool>("Locked")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -478,6 +484,8 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExaminationId");
+
                     b.ToTable("TestSchedule");
                 });
 
@@ -490,20 +498,20 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ExaminationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("TestScheduleId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("blocked")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ExaminationId");
+                    b.HasIndex("TestScheduleId");
 
                     b.ToTable("TheoryTests");
                 });
@@ -648,15 +656,24 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Navigation("Teacher");
                 });
 
-            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TheoryTest", b =>
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TestSchedule", b =>
                 {
                     b.HasOne("InformaticsCertificationExamSystem.Data.Examination", "Examination")
                         .WithMany()
-                        .HasForeignKey("ExaminationId")
+                        .HasForeignKey("ExaminationId");
+
+                    b.Navigation("Examination");
+                });
+
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TheoryTest", b =>
+                {
+                    b.HasOne("InformaticsCertificationExamSystem.Data.TestSchedule", "TestSchedule")
+                        .WithMany()
+                        .HasForeignKey("TestScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Examination");
+                    b.Navigation("TestSchedule");
                 });
 
             modelBuilder.Entity("SupervisorTeacher", b =>

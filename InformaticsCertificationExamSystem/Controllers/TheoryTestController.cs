@@ -22,27 +22,26 @@ namespace InformaticsCertificationExamSystem.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        [HttpGet("getAllByIdExam")]
-        public IActionResult getAllByIdExam(int IdTest)
+        [HttpGet("getAllByIdSchedule")]
+        public IActionResult getAllByIdSchedule(int IdSche)
         {
             var ListTheoryTest = (from theorytest in _unitOfWork.DbContext.TheoryTests
-                                  where theorytest.Examination.Id == IdTest
+                                  where theorytest.TestSchedule.Id == IdSche
                                   select theorytest).ToList();
             return Ok(ListTheoryTest);
         }
-        [HttpPost("UploadFileTheoryTest")]
-        public async Task<IActionResult> UploadFileTheoryTest(IFormFile file, int ExaminationId, string Name)
+        [HttpPost("CreateTheoryTest")]
+        public async Task<IActionResult> CreateTheoryTest(IFormFile file, int ScheduleId, string Name)
         {
             string path = "";
             Console.WriteLine("================================");
             Console.WriteLine(file.ContentType);
-            Console.WriteLine("Id kì thi " + ExaminationId);
             Console.WriteLine("tên bài thi " + Name);
             try
             {
                 TheoryTest TheoryTest = new TheoryTest();
-                var Exam = _unitOfWork.ExaminationRepository.GetByID(ExaminationId);
-                TheoryTest.Examination = Exam;
+                var Sche = _unitOfWork.TestScheduleRepository.GetByID(ScheduleId);
+                TheoryTest.TestSchedule = Sche;
                 TheoryTest.Name = Name;
                 _unitOfWork.TheoryTestRepository.Insert(TheoryTest);
                 _unitOfWork.SaveChange();

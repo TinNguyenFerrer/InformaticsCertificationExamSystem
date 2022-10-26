@@ -34,6 +34,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                                where students.ExaminationId == IdExam
                                select students).ToList();
             var ListExaminationRoom = (from room in _unitOfWork.ExaminationRoomRepository.GetAll()
+                                       where room.Locked == false
                                        select room).ToList();
             int SumCapacityRooms = 0;
             foreach (var room in ListExaminationRoom)
@@ -69,6 +70,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                     }
                     ex_test.Students = LStudents;
                     Exa_Tests.Add(ex_test);
+                    if (ListStudent.Count() == 0) break;
                 }
                 testSchedule.ExaminationRoom_TestSchedules = Exa_Tests;
                 testSchedule.ExaminationId = IdExam;
@@ -118,9 +120,18 @@ namespace InformaticsCertificationExamSystem.Controllers
             }
             return Ok(result);
         }
+        //get all schedule with each Examination
+        [HttpGet("GetAllScheduleByIdExamination")]
+        public async Task<IActionResult> GetAllScheduleByIdExamination(int IdExam)
+        {
+            var Schedules = (from sche in _unitOfWork.TestScheduleRepository.GetAll()
+                             where sche.ExaminationId == IdExam
+                             select sche);
+            return Ok(Schedules);
+        }
 
         //======================--------------------------------------=====================
-        
+
 
 
     }
