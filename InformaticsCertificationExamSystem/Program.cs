@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using InformaticsCertificationExamSystem.Controllers;
 using InformaticsCertificationExamSystem.Services;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,7 @@ builder.Services.AddCors(options =>
                               policy.WithOrigins("*")
                                                   .AllowAnyHeader()
                                                   .AllowAnyMethod();
+                                                  
                           });
 });
 
@@ -37,6 +41,23 @@ builder.Services.AddAutoMapper(typeof(Program));
 //            .AddJsonOptions(o => o.JsonSerializerOptions
 //                .ReferenceHandler = ReferenceHandler.Preserve);
 
+//Add jwt Authentication 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+        RequireExpirationTime = true,
+        ValidateLifetime = false,
+    };
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -47,8 +68,10 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
 app.UseCors("MyCORS");
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.MapControllers();
 

@@ -7,11 +7,13 @@ using InformaticsCertificationExamSystem.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TheoryTestController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -2,6 +2,7 @@
 using InformaticsCertificationExamSystem.DAL;
 using InformaticsCertificationExamSystem.Data;
 using InformaticsCertificationExamSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class ExaminationRoomController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -98,6 +100,18 @@ namespace InformaticsCertificationExamSystem.Controllers
                 return Ok();
             }
             return BadRequest("Not found Room  ");
+        }
+        [HttpGet("GetAllByIdTestSchedule")]
+        public IActionResult GetAllByIdTestSchedule(int idTestSchedule)
+        {
+            var Room = from room_schedule in _unitOfWork.DbContext.ExaminationRoom_TestSchedule
+                       where room_schedule.TestSchedule.Id == idTestSchedule
+                       select new { 
+                           room_schedule.ExaminationRoom,
+                           room_schedule.Supervisor.Teachers
+                       };
+            return Ok(Room);
+                       
         }
     }
 }

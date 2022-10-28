@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using InformaticsCertificationExamSystem.Models;
 using InformaticsCertificationExamSystem.Data;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,6 +12,7 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TeacherController : ControllerBase
     {
 

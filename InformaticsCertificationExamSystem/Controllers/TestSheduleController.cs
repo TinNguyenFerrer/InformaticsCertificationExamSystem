@@ -2,6 +2,7 @@
 using InformaticsCertificationExamSystem.DAL;
 using InformaticsCertificationExamSystem.Data;
 using InformaticsCertificationExamSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class TestSheduleController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
