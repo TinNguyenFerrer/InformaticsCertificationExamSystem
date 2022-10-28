@@ -23,13 +23,14 @@ namespace InformaticsCertificationExamSystem.Controllers
         public async Task<IActionResult> AutoCreateSupervisor(int IdTestSchedule)
         {
             //xóa giám thị cũ nếu đã chia giám thị rồi
-            var supervisors = from Room_schedule in _unitOfWork.DbContext.ExaminationRoom_TestSchedule
+            var supervisors = (from Room_schedule in _unitOfWork.DbContext.ExaminationRoom_TestSchedule
                              where Room_schedule.TestSchedule.Id == IdTestSchedule
-                             select Room_schedule.Supervisor;
-            if (supervisors.Count() != 0)
+                             select Room_schedule.Supervisor).ToList();
+            if (supervisors.Count() > 0)
             {
                 foreach (var supervisor in supervisors)
                 {
+                    if (supervisor == null) break;
                     _unitOfWork.SupervisorRepository.Delete(supervisor.Id);
                 }
             }
@@ -41,7 +42,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             var AllTeacher = from teachers in _unitOfWork.TeacherRepository.GetAll()
                              where teachers.Locked == false
                              select teachers;
-            if (ExaminationRoom_TestSchedule.Count() > AllTeacher.Count() * 2) return BadRequest("not enough teachers"); 
+            if (ExaminationRoom_TestSchedule.Count()*2 > AllTeacher.ToList().Count()) return BadRequest("not enough teachers"); 
 
             Random rnd = new Random();
             int rd1;

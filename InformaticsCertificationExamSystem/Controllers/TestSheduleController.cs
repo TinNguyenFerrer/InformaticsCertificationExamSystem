@@ -38,6 +38,12 @@ namespace InformaticsCertificationExamSystem.Controllers
             var ListExaminationRoom = (from room in _unitOfWork.ExaminationRoomRepository.GetAll()
                                        where room.Locked == false
                                        select room).ToList();
+            // --------------------chia theo số lượng giáo viên--------------------------
+            var AllTeacher = from teachers in _unitOfWork.TeacherRepository.GetAll()
+                             where teachers.Locked == false
+                             select teachers;
+            ListExaminationRoom = ListExaminationRoom.GetRange(0, (int)AllTeacher.Count()/2);
+            //--------------------------------===================-------------------------------
             int SumCapacityRooms = 0;
             foreach (var room in ListExaminationRoom)
             {
