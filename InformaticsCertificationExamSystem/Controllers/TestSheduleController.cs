@@ -5,6 +5,7 @@ using InformaticsCertificationExamSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace InformaticsCertificationExamSystem.Controllers
 {
@@ -42,7 +43,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             var AllTeacher = from teachers in _unitOfWork.TeacherRepository.GetAll()
                              where teachers.Locked == false
                              select teachers;
-            ListExaminationRoom = ListExaminationRoom.GetRange(0, (int)AllTeacher.Count()/2);
+            ListExaminationRoom = ListExaminationRoom.GetRange(0, (int)AllTeacher.Count() / 2);
             //--------------------------------===================-------------------------------
             int SumCapacityRooms = 0;
             foreach (var room in ListExaminationRoom)
@@ -117,11 +118,11 @@ namespace InformaticsCertificationExamSystem.Controllers
                                    join room in _unitOfWork.DbContext.ExaminationRooms
                                    on exam_testsche.ExaminationRoom.Id equals room.Id
                                    where exam_testsche.TestSchedule.Id == Schedu.Id
-                                   select new { room = room.Name, exam_testscheid = exam_testsche.Id}
+                                   select new { room = room.Name, exam_testscheid = exam_testsche.Id }
                                   ).Distinct();
                 foreach (var room in room_schedu)
                 {
-                    var sched = new { Schedu, room.room,room.exam_testscheid };
+                    var sched = new { Schedu, room.room, room.exam_testscheid };
                     result.Add(sched);
                 }
 
@@ -139,10 +140,63 @@ namespace InformaticsCertificationExamSystem.Controllers
         }
 
         //======================--------------------------------------=====================
+        [HttpGet("GetScheduleByTokenTeacher")]
+        public IActionResult GetScheduleByTokenTeacher()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
 
+            // Gets list of claims.
+            IEnumerable<Claim> claim = identity.Claims;
+            if (claim.Count() == 0) { return BadRequest("Token invalid"); }
+            // Gets name from claims. Generally it's an email address.
+            var idTeacherClaim = claim
+                .Where(x => x.Type == "TeacherId")
+                .FirstOrDefault();
+
+            //get all Superviser by id teacher
+            var supervisers = (from teacher in _unitOfWork.DbContext.Teachers
+                               where teacher.Id.ToString() == idTeacherClaim.Value
+                               select teacher.Supervisors.ToList());
+            var supervisersList = supervisers.SelectMany(i => i).Distinct().ToList();
+
+            var room_schedules = from roomSchedule in _unitOfWork.DbContext.ExaminationRoom_TestSchedule.ToList()
+                                 join sup_viser in supervisersList
+                                 on roomSchedule.SupervisorID equals sup_viser.Id
+                                 select roomSchedule;
+            var result = from room_schedule in room_schedules
+                         join room_scheduleDB in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                         on room_schedule.Id equals room_scheduleDB.Id
+                         join room in _unitOfWork.ExaminationRoomRepository.GetAll()
+                         on room_scheduleDB.ExaminationRoomId equals room.Id
+                         join schedule in _unitOfWork.TestScheduleRepository.GetAll()
+                         on  room_scheduleDB.TestScheduleId equals schedule.Id 
+                         select new
+                         {
+                             roomName = room.Name,
+                             roomId = room.Id,
+                             testSchedule = schedule.Name,
+                             testScheduleId = schedule.Id,
+                             examinationId = schedule.ExaminationId
+                         };
+
+            //foreach (var superviser in supervisersList)
+            //{
+            //    var t = from room_sched in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+            //            join sub in supervisersList.ToList()
+            //            on sub.
+            //             where room_sched.SupervisorID == superviser.Id
+            //             select room_sched;
+            //    var m = t.ToList().Distinct();
+            //    rooms_schedule.AddRange(m);
+            //}
+
+            return Ok(result);
 
 
     }
+
+
+}
 }
 
 

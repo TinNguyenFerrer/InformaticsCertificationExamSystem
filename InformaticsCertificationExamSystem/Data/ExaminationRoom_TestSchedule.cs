@@ -11,11 +11,11 @@ namespace InformaticsCertificationExamSystem.Data
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity), Key]
         [Column("ID")]
         public int Id { get; set; }
-        //[ForeignKey("ExaminationRoom")]
-        //public int ExaminationRoomId { get; set; }
+        [ForeignKey("ExaminationRoom")]
+        public int ExaminationRoomId { get; set; }
         public ExaminationRoom ExaminationRoom { get; set; }
-        //[ForeignKey("TestSchedule")]
-        //public int TestSchedule { get; set; }
+        [ForeignKey("TestSchedule")]
+        public int TestScheduleId { get; set; }
         public TestSchedule TestSchedule { get; set; }
         //[ForeignKey("Supervisor")]
         public int? SupervisorID { get; set; }
