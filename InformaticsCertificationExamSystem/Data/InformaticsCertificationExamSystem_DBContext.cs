@@ -7,25 +7,25 @@ namespace InformaticsCertificationExamSystem.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //one to one
-            modelBuilder.Entity<Student>()
-                .HasOne<FileSubmitted>(a => a.FileSubmitted)
-                .WithOne(b => b.Student)
-                .HasForeignKey<FileSubmitted>(c => c.FileOfStudentId);
+            //modelBuilder.Entity<Student>()
+            //    .HasOne<FileSubmitted>(a => a.FileSubmitted)
+            //    .WithOne(b => b.Student)
+            //    .HasForeignKey<FileSubmitted>(c => c.StudentId);
 
-            modelBuilder.Entity<Student>()
-               .HasOne<FinalResult>(a => a.FinalResult)
-               .WithOne(b => b.Student)
-               .HasForeignKey<FinalResult>(c => c.ResultOfStudentId);
+            //modelBuilder.Entity<Student>()
+            //   .HasOne<FinalResult>(a => a.FinalResult)
+            //   .WithOne(b => b.Student)
+            //   .HasForeignKey<FinalResult>(c => c.ResultOfStudentId);
 
             modelBuilder.Entity<Student>()
                 .HasOne<InconsistentMark>(a => a.InconsistentMark)
                 .WithOne(b => b.Student)
                 .HasForeignKey<InconsistentMark>(c => c.MarkOfStudentId);
 
-            modelBuilder.Entity<Teacher>()
-                .HasOne<Permission>(a => a.Permission)
-                .WithOne(b => b.Teacher)
-                .HasForeignKey<Permission>(c => c.PermissionOfTeacherID);
+            //modelBuilder.Entity<Teacher>()
+            //    .HasOne<Permission>(a => a.Permission)
+            //    .WithOne(b => b.Teacher)
+            //    .HasForeignKey<Permission>(c => c.PermissionOfTeacherID);
 
             modelBuilder.Entity<ExaminationRoom_TestSchedule>()
                 .HasOne<Supervisor>(a => a.Supervisor)

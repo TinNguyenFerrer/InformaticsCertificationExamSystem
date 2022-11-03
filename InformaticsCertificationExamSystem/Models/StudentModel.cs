@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace InformaticsCertificationExamSystem.Models
 {
     [Table("Student")]
-    [Index(nameof(IdentifierCode), IsUnique = true)]
+    
     public class StudentModel
     {
         [Column("StudentID")]

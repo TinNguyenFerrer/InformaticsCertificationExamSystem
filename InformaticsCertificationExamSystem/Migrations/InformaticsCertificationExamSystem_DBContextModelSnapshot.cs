@@ -145,15 +145,11 @@ namespace InformaticsCertificationExamSystem.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
 
                     b.Property<bool>("FileExcel")
                         .HasColumnType("bit");
-
-                    b.Property<int>("FileOfStudentId")
-                        .HasColumnType("int");
 
                     b.Property<bool>("FilePowerPoint")
                         .HasColumnType("bit");
@@ -161,16 +157,14 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Property<bool>("FileWord")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("LastSubmissionTime")
+                    b.Property<DateTime?>("LastSubmissionTime")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("FileOfStudentId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Code] IS NOT NULL");
 
                     b.ToTable("FileSubmitted");
                 });
@@ -196,16 +190,10 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Property<float>("Practice")
                         .HasColumnType("real");
 
-                    b.Property<int>("ResultOfStudentId")
-                        .HasColumnType("int");
-
                     b.Property<float>("Word")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ResultOfStudentId")
-                        .IsUnique();
 
                     b.ToTable("FinalResults");
                 });
@@ -251,19 +239,10 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Property<bool>("Admin")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Marker")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("PermissionOfTeacherID")
-                        .HasColumnType("int");
-
                     b.Property<bool>("Supervision")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PermissionOfTeacherID")
-                        .IsUnique();
 
                     b.ToTable("Permission");
                 });
@@ -298,9 +277,18 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Property<int?>("ExaminationRoom_TestScheduleId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("FileSubmittedId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("FinalResultId")
+                        .HasColumnType("int");
+
                     b.Property<string>("IdentifierCode")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("Locked")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -334,6 +322,14 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.HasIndex("ExaminationId");
 
                     b.HasIndex("ExaminationRoom_TestScheduleId");
+
+                    b.HasIndex("FileSubmittedId")
+                        .IsUnique()
+                        .HasFilter("[FileSubmittedId] IS NOT NULL");
+
+                    b.HasIndex("FinalResultId")
+                        .IsUnique()
+                        .HasFilter("[FinalResultId] IS NOT NULL");
 
                     b.HasIndex("IdentifierCode")
                         .IsUnique()
@@ -420,6 +416,9 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<int?>("PermissionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -429,6 +428,8 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     b.HasIndex("IdentifierCode")
                         .IsUnique();
+
+                    b.HasIndex("PermissionId");
 
                     b.ToTable("Teacher");
                 });
@@ -511,7 +512,8 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TestScheduleId");
+                    b.HasIndex("TestScheduleId")
+                        .IsUnique();
 
                     b.ToTable("TheoryTests");
                 });
@@ -557,28 +559,6 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Navigation("TestSchedule");
                 });
 
-            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.FileSubmitted", b =>
-                {
-                    b.HasOne("InformaticsCertificationExamSystem.Data.Student", "Student")
-                        .WithOne("FileSubmitted")
-                        .HasForeignKey("InformaticsCertificationExamSystem.Data.FileSubmitted", "FileOfStudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.FinalResult", b =>
-                {
-                    b.HasOne("InformaticsCertificationExamSystem.Data.Student", "Student")
-                        .WithOne("FinalResult")
-                        .HasForeignKey("InformaticsCertificationExamSystem.Data.FinalResult", "ResultOfStudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.InconsistentMark", b =>
                 {
                     b.HasOne("InformaticsCertificationExamSystem.Data.Student", "Student")
@@ -588,17 +568,6 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .IsRequired();
 
                     b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Permission", b =>
-                {
-                    b.HasOne("InformaticsCertificationExamSystem.Data.Teacher", "Teacher")
-                        .WithOne("Permission")
-                        .HasForeignKey("InformaticsCertificationExamSystem.Data.Permission", "PermissionOfTeacherID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Teacher");
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Student", b =>
@@ -613,6 +582,14 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .WithMany("Students")
                         .HasForeignKey("ExaminationRoom_TestScheduleId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("InformaticsCertificationExamSystem.Data.FileSubmitted", "FileSubmitted")
+                        .WithOne("Student")
+                        .HasForeignKey("InformaticsCertificationExamSystem.Data.Student", "FileSubmittedId");
+
+                    b.HasOne("InformaticsCertificationExamSystem.Data.FinalResult", "FinalResult")
+                        .WithOne("Student")
+                        .HasForeignKey("InformaticsCertificationExamSystem.Data.Student", "FinalResultId");
 
                     b.HasOne("InformaticsCertificationExamSystem.Data.StudentType", "StudentType")
                         .WithMany("Students")
@@ -630,11 +607,24 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     b.Navigation("ExaminationRoom_TestSchedule");
 
+                    b.Navigation("FileSubmitted");
+
+                    b.Navigation("FinalResult");
+
                     b.Navigation("StudentType");
 
                     b.Navigation("TestSchedule");
 
                     b.Navigation("TheoryTest");
+                });
+
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Teacher", b =>
+                {
+                    b.HasOne("InformaticsCertificationExamSystem.Data.Permission", "Permission")
+                        .WithMany("Teacher")
+                        .HasForeignKey("PermissionId");
+
+                    b.Navigation("Permission");
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Teacher_InconsistentMark", b =>
@@ -668,8 +658,8 @@ namespace InformaticsCertificationExamSystem.Migrations
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TheoryTest", b =>
                 {
                     b.HasOne("InformaticsCertificationExamSystem.Data.TestSchedule", "TestSchedule")
-                        .WithMany()
-                        .HasForeignKey("TestScheduleId")
+                        .WithOne("TheoryTest")
+                        .HasForeignKey("InformaticsCertificationExamSystem.Data.TheoryTest", "TestScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -706,17 +696,30 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Navigation("Students");
                 });
 
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.FileSubmitted", b =>
+                {
+                    b.Navigation("Student")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.FinalResult", b =>
+                {
+                    b.Navigation("Student")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.InconsistentMark", b =>
                 {
                     b.Navigation("Teacher_InconsistentMarks");
                 });
 
+            modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Permission", b =>
+                {
+                    b.Navigation("Teacher");
+                });
+
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Student", b =>
                 {
-                    b.Navigation("FileSubmitted");
-
-                    b.Navigation("FinalResult");
-
                     b.Navigation("InconsistentMark");
                 });
 
@@ -732,8 +735,6 @@ namespace InformaticsCertificationExamSystem.Migrations
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.Teacher", b =>
                 {
-                    b.Navigation("Permission");
-
                     b.Navigation("Teacher_InconsistentMarks");
                 });
 
@@ -742,6 +743,9 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Navigation("ExaminationRoom_TestSchedules");
 
                     b.Navigation("Students");
+
+                    b.Navigation("TheoryTest")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.TheoryTest", b =>

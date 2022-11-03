@@ -11,7 +11,7 @@ namespace InformaticsCertificationExamSystem.Data
         public int Id { get; set; }
         public int TestScheduleId { get; set; }
         public TestSchedule TestSchedule { get; set; }
-        public int TheoryTestId { get; set; }
-        public TheoryTest TheoryTest { get; set; }
+        //public int TheoryTestId { get; set; }
+        //public TheoryTest TheoryTest { get; set; }
     }
 }

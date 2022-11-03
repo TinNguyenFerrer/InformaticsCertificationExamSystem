@@ -15,13 +15,14 @@ namespace InformaticsCertificationExamSystem.Data
         [DefaultValue(false)]
         public Boolean Supervision { get; set; } = false;
 
-        [DefaultValue(false)]
-        public Boolean Marker { get; set; } = false;
+        //[DefaultValue(false)]
+        //public Boolean Marker { get; set; } = false;
 
         [DefaultValue(false)]
         public Boolean Admin { get; set; } = false ;
 
-        public int PermissionOfTeacherID { get; set; }
-        public virtual Teacher Teacher { get; set; }
+        //public int PermissionOfTeacherID { get; set; }
+        //public virtual Teacher Teacher { get; set; }        //public int PermissionOfTeacherID { get; set; }
+        public ICollection<Teacher> Teacher { get; set; }
     }
 }

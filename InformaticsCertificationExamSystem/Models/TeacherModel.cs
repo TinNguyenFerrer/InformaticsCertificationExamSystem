@@ -36,7 +36,7 @@ namespace InformaticsCertificationExamSystem.Models
         [MaxLength(500)]
         public string Address { get; set; }
 
-        public virtual PermissionModel? Permission { get; set; }
+        //public virtual PermissionModel? Permission { get; set; }
 
 
     }

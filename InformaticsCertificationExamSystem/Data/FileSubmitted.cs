@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 
 namespace InformaticsCertificationExamSystem.Data
@@ -12,8 +13,7 @@ namespace InformaticsCertificationExamSystem.Data
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity), Key]
         [Column("FileSubmittedID")]
         public int Id { get; set; }
-        [MaxLength(4)]
-        [Required]
+        [MaxLength(8)]
         public string? Code { get; set; }
 
         [DefaultValue(false)]
@@ -26,12 +26,15 @@ namespace InformaticsCertificationExamSystem.Data
         public Boolean FilePowerPoint { get; set; } = false;
 
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}", ApplyFormatInEditMode = true)]
-        [Required]
-        public DateTime LastSubmissionTime { get; set; }
+        //[Required]
+        public DateTime? LastSubmissionTime { get; set; }
 
         //[DefaultValue(false)]
         //public Boolean UploadToCloud { get; set; } = false;
-        public int FileOfStudentId { get; set; }
+        //[ForeignKey("Student")]
+        //[JsonIgnore]
+        //public int StudentId { get; set; }
+        [JsonIgnore]
         public virtual Student Student { get; set; }
     }
 }

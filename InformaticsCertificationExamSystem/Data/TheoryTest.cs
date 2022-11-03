@@ -19,6 +19,8 @@ namespace InformaticsCertificationExamSystem.Data
         public Boolean blocked { get; set; } = false;
         public virtual ICollection<Student>? Students { get; set; }
         //public virtual Examination Examination { get; set; }
+        [ForeignKey("TestSchedule")]
+        public int TestScheduleId { get; set; }
         public virtual TestSchedule TestSchedule { get; set; }
         //public virtual ICollection<TestSchedule_TheoryTest>? TestSchedule_TheoryTests { get; set; }
     }

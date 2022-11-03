@@ -40,7 +40,9 @@ namespace InformaticsCertificationExamSystem.Data
         public string Address { get; set; }
         [DefaultValue(false)]
         public Boolean Locked { get; set; } = false;
-
+        [ForeignKey("Permission")]
+        [DefaultValue(1)]
+        public int? PermissionId { get; set; } = 1;
         public virtual Permission? Permission { get; set; }
         public ICollection<Supervisor>? Supervisors { get; set; }
        

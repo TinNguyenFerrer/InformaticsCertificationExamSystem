@@ -19,6 +19,9 @@ namespace InformaticsCertificationExamSystem.Data
         [Column("Name")]
         public string Name { get; set; }
 
+        [DefaultValue(true)]
+        public Boolean Locked { get; set; } = true;
+
         [Required]
         [MaxLength(255)]
         [Column("BirthPlace")]
@@ -49,12 +52,21 @@ namespace InformaticsCertificationExamSystem.Data
         public int ExaminationId { get; set; }
         [JsonIgnore]
         public Examination Examination { get; set; }
+        [ForeignKey("FinalResult")]
+        public int? FinalResultId { get; set; }
         public FinalResult? FinalResult { get; set; }
         public InconsistentMark? InconsistentMark { get; set; }
         public TheoryTest? TheoryTest { get; set; }
+        [ForeignKey("StudentType")]
+        [DefaultValue(1)]
+        public int? StudentTypeId { get; set; } = 1;
         public StudentType? StudentType { get; set; }
-        public FileSubmitted? FileSubmitted { get; set; }
+        [ForeignKey("FileSubmitted")]
+        public int? FileSubmittedId { get; set; }
+        public virtual FileSubmitted? FileSubmitted { get; set; }
 
+        [ForeignKey("TestSchedule")]
+        public int? TestScheduleId { get; set; }
         public TestSchedule? TestSchedule { get; set; }
         public int? ExaminationRoom_TestScheduleId { get; set; }
         [JsonIgnore]

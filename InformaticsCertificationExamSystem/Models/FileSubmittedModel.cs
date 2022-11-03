@@ -31,7 +31,7 @@ namespace InformaticsCertificationExamSystem.Models
 
         //[DefaultValue(false)]
         //public Boolean UploadToCloud { get; set; } = false;
-        public int FileOfStudentId { get; set; }
+        //public int FileOfStudentId { get; set; }
         public int  StudentId { get; set; }
     }
 }

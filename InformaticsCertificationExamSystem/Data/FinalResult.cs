@@ -9,12 +9,12 @@ namespace InformaticsCertificationExamSystem.Data
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity), Key]
         [Column("InconsistentMarkID")]
         public int Id { get; set; }
-        public float Word { get; set; }
-        public float Excel { get; set; }
-        public float PowerPoint { get; set; }
-        public float Practice { get; set; }
-        public float FinalMark { get; set; }
-        public int ResultOfStudentId { get; set; }
+        public float Word { get; set; } = 0;
+        public float Excel { get; set; } = 0;
+        public float PowerPoint { get; set; } = 0;
+        public float Practice { get; set; } = 0;
+        public float FinalMark { get; set; } = 0;
+        //public int ResultOfStudentId { get; set; }
         public virtual Student Student { get; set; }
     }
 }

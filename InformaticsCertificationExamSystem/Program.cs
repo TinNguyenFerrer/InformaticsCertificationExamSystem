@@ -38,9 +38,11 @@ builder.Services.AddRepository();
 builder.Services.AddAutoMapper(typeof(Program));
 
 //tránh vòng lặp
-//builder.Services.AddControllers()
-//            .AddJsonOptions(o => o.JsonSerializerOptions
-//                .ReferenceHandler = ReferenceHandler.Preserve);
+//builder.Services.AddControllers().AddJsonOptions(options =>
+//{
+//    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+//    options.JsonSerializerOptions.WriteIndented = true;
+//});
 
 //Add jwt Authentication 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
