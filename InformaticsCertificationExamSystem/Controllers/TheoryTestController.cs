@@ -45,6 +45,13 @@ namespace InformaticsCertificationExamSystem.Controllers
             if (theorytest.Any())
             {
                 _unitOfWork.TheoryTestRepository.Delete(theorytest.FirstOrDefault().Id);
+                string pathdelete = "";
+                pathdelete = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFilesTheory"));
+                if (System.IO.File.Exists(Path.Combine(pathdelete, theorytest.FirstOrDefault().Id + ".pdf")))
+                {
+                    // If file found, delete it    
+                    System.IO.File.Delete(Path.Combine(pathdelete, theorytest.FirstOrDefault().Id + ".pdf"));
+                }
             }
             try
             {

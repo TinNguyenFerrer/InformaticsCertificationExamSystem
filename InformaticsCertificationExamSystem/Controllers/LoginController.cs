@@ -60,10 +60,15 @@ namespace InformaticsCertificationExamSystem.Controllers
 
 
             var TokenResult = new JwtSecurityTokenHandler().WriteToken(token);
+            var permission = "admin";
+            if (Teacher.FirstOrDefault().PermissionId == 1)
+            {
+                permission = "teacher";
+            }
             return Ok(new
             {
                 token = TokenResult,
-                permission = "admin"
+                permission = permission
             });
         }
 

@@ -4,6 +4,7 @@ using InformaticsCertificationExamSystem.Models;
 using InformaticsCertificationExamSystem.Data;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -88,6 +89,23 @@ namespace InformaticsCertificationExamSystem.Controllers
                 return BadRequest();
             }
             
+        }
+
+        [HttpGet("GetTeacherInfoByTokenIdExam")]
+        public IActionResult GetTeacherInfoByTokenIdExam()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            // Gets list of claims.
+            IEnumerable<Claim> claim = identity.Claims;
+            if (claim.Count() == 0) { return BadRequest("Token invalid"); }
+            // Gets name from claims. Generally it's an email address.
+            var idTeacherClaim = claim
+                .Where(x => x.Type == "TeacherId")
+                .FirstOrDefault();
+            if (idTeacherClaim == null) { return BadRequest("Id teacher null"); }
+            var result = _unitOfWork.TeacherRepository.GetByID(Int32.Parse(idTeacherClaim.Value));
+            return Ok(_mapper.Map<TeacherModel>(result));
         }
     }
 }
