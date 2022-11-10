@@ -36,7 +36,7 @@ namespace InformaticsCertificationExamSystem.Data
         public virtual Examination? Examination { get; set; }
         //public Supervisor? Supervisor { get; set; }
         public ICollection<ExaminationRoom_TestSchedule>? ExaminationRoom_TestSchedules { get; set; }
-        public TheoryTest TheoryTest { get; set; }
+        public ICollection<TheoryTest>? TheoryTest { get; set; }
 
     }
 }

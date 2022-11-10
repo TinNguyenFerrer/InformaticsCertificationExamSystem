@@ -23,6 +23,8 @@ namespace InformaticsCertificationExamSystem.Services
             services.AddScoped<ITheoryTestRepository, TheoryTestRepository>();
             services.AddScoped<ISupervisorRepository, SupervisorRepository>();
             services.AddScoped<IExaminationRoom_TestScheduleRepository, ExaminationRoom_TestScheduleRepository>();
+
+            services.AddScoped<ICSVService, CSVService>();
             return services;
         }
     }

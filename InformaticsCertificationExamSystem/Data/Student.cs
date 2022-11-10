@@ -8,6 +8,7 @@ namespace InformaticsCertificationExamSystem.Data
 {
     [Table("Student")]
     [Index(nameof(IdentifierCode), IsUnique = true)]
+    [Index(nameof(HashCode), IsUnique = true)]
     public class Student
     {
         [Column("StudentID")]
@@ -42,6 +43,8 @@ namespace InformaticsCertificationExamSystem.Data
 
         [MaxLength(20)]
         public string? IdentifierCode { get; set; }
+        [MaxLength(20)]
+        public string? HashCode { get; set; }
 
         [MaxLength(255)]
         public string? Password { get; set; }
@@ -54,6 +57,7 @@ namespace InformaticsCertificationExamSystem.Data
         public Examination Examination { get; set; }
         [ForeignKey("FinalResult")]
         public int? FinalResultId { get; set; }
+        [JsonIgnore]
         public FinalResult? FinalResult { get; set; }
         public InconsistentMark? InconsistentMark { get; set; }
         public TheoryTest? TheoryTest { get; set; }

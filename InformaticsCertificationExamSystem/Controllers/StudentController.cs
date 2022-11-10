@@ -18,10 +18,12 @@ namespace InformaticsCertificationExamSystem.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         public readonly IMapper _mapper;
-        public StudentController(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly ICSVService _csvService;
+        public StudentController(IUnitOfWork unitOfWork, IMapper mapper, ICSVService csvService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _csvService = csvService;
         }
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllStudent()
@@ -59,19 +61,21 @@ namespace InformaticsCertificationExamSystem.Controllers
         {
             try
             {
+                //Console.WriteLine("++++++++++++++++++++++++++++++++++++++");
+                //Console.WriteLine(NewStudent.Name);
                 //Console.WriteLine(NewExamination.GradingDeadline);
                 var t = _mapper.Map<Student>(NewStudent);
                 Student studentadd = new Student()
                 {
-                    Name=t.Name,
-                    BirthPlace=t.BirthPlace,
-                    BirthDay=t.BirthDay,
-                    Email=t.Email,
-                    PhoneNumber=t.PhoneNumber,
-                    IdentifierCode=t.IdentifierCode,
-                    Password=t.Password,
-                    NumberOfCheats=t.NumberOfCheats,
-                    ExaminationId=t.ExaminationId,
+                    Name = t.Name,
+                    BirthPlace = t.BirthPlace,
+                    BirthDay = t.BirthDay,
+                    Email = t.Email,
+                    PhoneNumber = t.PhoneNumber,
+                    IdentifierCode = t.IdentifierCode,
+                    Password = t.Password,
+                    NumberOfCheats = t.NumberOfCheats,
+                    ExaminationId = t.ExaminationId,
                     FinalResult = new FinalResult(),
                     StudentTypeId = t.StudentTypeId,
                     FileSubmitted = new FileSubmitted(),
@@ -87,6 +91,37 @@ namespace InformaticsCertificationExamSystem.Controllers
                 _unitOfWork.StudentRepository.Insert(t);
                 _unitOfWork.SaveChange();
                 return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPost("CreateStudentSCV")]
+        public async Task<IActionResult> CreateStudentSCV(IFormFile file, int idExam = 0)
+        {
+            try
+            {
+                var SCV_students = _csvService.ReadCSV<SCV_AddStudentModel>(file.OpenReadStream());
+                List<Student> students = new List<Student>();
+
+                foreach (var SCV_student in SCV_students)
+                {
+                    FileSubmitted filesubmit = new FileSubmitted();
+                    FinalResult finalresult = new FinalResult();
+                    var stud = _mapper.Map<StudentModel>(SCV_student);
+                    stud.ExaminationId = idExam;
+                    // create Student
+                    Student student = _mapper.Map<Student>(stud);
+                    student.FileSubmitted = filesubmit;
+                    student.FinalResult = finalresult;
+                    students.Add(student);
+                    _unitOfWork.StudentRepository.Insert(student);
+                }
+
+                _unitOfWork.SaveChange();
+                return Ok(students);
             }
             catch (Exception e)
             {
@@ -143,7 +178,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             {
 
                 var k = _mapper.Map<StudentInfoSubmitFileModel>(student.student);
-                k.FileSubmitted = _mapper.Map < FileSubmittedModel>(student.filesubmitted);
+                k.FileSubmitted = _mapper.Map<FileSubmittedModel>(student.filesubmitted);
                 result.Add(k);
             }
             return Ok(result);
@@ -165,13 +200,40 @@ namespace InformaticsCertificationExamSystem.Controllers
             _unitOfWork.SaveChange();
             return Ok();
         }
+        //-------------Khóa tài khoản làm bài sinh viên----------------
+        [HttpGet("LockStudent")]
+        public IActionResult LockStudent(int ExamRom_TestScheid)
+        {
+            var students = from student in _unitOfWork.DbContext.Students
+                           join filesubmitted in _unitOfWork.FileSubmittedRepository.GetAll()
+                           on student.FileSubmittedId equals filesubmitted.Id
+                           where student.ExaminationRoom_TestScheduleId == ExamRom_TestScheid
+                           select student;
+            foreach (var student in students)
+            {
+                student.Locked = true;
+                _unitOfWork.StudentRepository.Update(student);
+            }
+            _unitOfWork.SaveChange();
+            return Ok();
+        }
 
         [HttpGet("CreatePassWord")]
         public IActionResult CreatePassWord(int IdExam)
         {
             try
             {
-                var students = _unitOfWork.StudentRepository.GetAllByIdExamination(IdExam);
+                var students = SummaryService.Randomize(_unitOfWork.StudentRepository.GetAllByIdExamination(IdExam));
+                var listRoom_Schedule = from testschedule in _unitOfWork.TestScheduleRepository.GetAll()
+                                        join examroom_schedule in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                                        on testschedule.Id equals examroom_schedule.TestScheduleId
+                                        where testschedule.ExaminationId == IdExam
+                                        select examroom_schedule;
+
+                //ramdom number
+                var rdom = new Random();
+                //int t = (IdExam % 10*10000)+ IdExam*3;
+                int hashCodeFinal = rdom.Next(10000, 98000); 
                 if (!students.Any())
                 {
                     return BadRequest("Examination not have Student");
@@ -180,6 +242,12 @@ namespace InformaticsCertificationExamSystem.Controllers
                 {
 
                     var studentTemp = student;
+                    if (student.HashCode == null)
+                    {
+                        var hashCodeFirst = SummaryService.IntToBase32(IdExam);
+                        studentTemp.HashCode = hashCodeFirst+"_"+ hashCodeFinal;
+                        hashCodeFinal++;
+                    }
                     if (student.IdentifierCode == null)
                     {
                         if (student.StudentTypeId == 1)
@@ -201,6 +269,28 @@ namespace InformaticsCertificationExamSystem.Controllers
                         _unitOfWork.StudentRepository.Update(student);
                     }
                 }
+                
+                string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "FileSubmit"));
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                foreach (var room_schedu in listRoom_Schedule)
+                {
+                    path = Path.Combine(path, room_schedu.TestScheduleId.ToString());
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    path = Path.Combine(path, room_schedu.ExaminationRoomId.ToString());
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+
+                }
+
                 _unitOfWork.SaveChange();
                 return Ok();
             }
@@ -224,7 +314,20 @@ namespace InformaticsCertificationExamSystem.Controllers
             var t = _unitOfWork.StudentRepository.GetByID(int.Parse(idStudentClaim.Value));
             return Ok(t);
         }
-
+        [HttpPut("ChangeTestSchedule")]
+        public IActionResult ChangeTestSchedule(FromChangeScheduleForStudentModel ChangeScheduleForStudent)
+        {
+            var room_schedule = from examinationRoom_testSchedule in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                                where examinationRoom_testSchedule.TestScheduleId == ChangeScheduleForStudent.IdTestSchedule && examinationRoom_testSchedule.ExaminationRoomId == ChangeScheduleForStudent.IdRoom
+                                select examinationRoom_testSchedule.Id;
+            if (!room_schedule.Any()) return BadRequest("ExaminationRoom_TestSchedule not match");
+            var student = _unitOfWork.StudentRepository.GetByID(ChangeScheduleForStudent.IdStudent);
+            if (student == null) return BadRequest("StudentId not match");
+            student.ExaminationRoom_TestScheduleId = room_schedule.First();
+            _unitOfWork.StudentRepository.Update(student);
+            _unitOfWork.SaveChange();
+            return Ok("Update successful");
+        }
 
     }
 }

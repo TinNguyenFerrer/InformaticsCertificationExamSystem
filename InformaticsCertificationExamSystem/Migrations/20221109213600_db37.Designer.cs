@@ -4,6 +4,7 @@ using InformaticsCertificationExamSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InformaticsCertificationExamSystem.Migrations
 {
     [DbContext(typeof(InformaticsCertificationExamSystem_DBContext))]
-    partial class InformaticsCertificationExamSystem_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20221109213600_db37")]
+    partial class db37
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,10 +285,6 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Property<int?>("FinalResultId")
                         .HasColumnType("int");
 
-                    b.Property<string>("HashCode")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<string>("IdentifierCode")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -334,10 +332,6 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.HasIndex("FinalResultId")
                         .IsUnique()
                         .HasFilter("[FinalResultId] IS NOT NULL");
-
-                    b.HasIndex("HashCode")
-                        .IsUnique()
-                        .HasFilter("[HashCode] IS NOT NULL");
 
                     b.HasIndex("IdentifierCode")
                         .IsUnique()

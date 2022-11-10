@@ -34,25 +34,26 @@ namespace InformaticsCertificationExamSystem.Controllers
             return Ok(ListTheoryTest);
         }
         [HttpPost("CreateTheoryTest")]
-        public async Task<IActionResult> CreateTheoryTest(IFormFile file, int ScheduleId, string Name)
+        public async Task<IActionResult> CreateTheoryTest(IFormFile file, int ScheduleId, string Name, IFormFile fileExel)
         {
             string path = "";
             Console.WriteLine("================================");
             Console.WriteLine(file.ContentType);
             Console.WriteLine("tên bài thi " + Name);
+            Console.WriteLine(fileExel.ContentType);
             var theorytests = _unitOfWork.TheoryTestRepository.GetAll();
             var theorytest = (from t in theorytests where t.TestScheduleId == ScheduleId select t);
-            if (theorytest.Any())
-            {
-                _unitOfWork.TheoryTestRepository.Delete(theorytest.FirstOrDefault().Id);
-                string pathdelete = "";
-                pathdelete = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFilesTheory"));
-                if (System.IO.File.Exists(Path.Combine(pathdelete, theorytest.FirstOrDefault().Id + ".pdf")))
-                {
-                    // If file found, delete it    
-                    System.IO.File.Delete(Path.Combine(pathdelete, theorytest.FirstOrDefault().Id + ".pdf"));
-                }
-            }
+            //if (theorytest.Any())
+            //{
+            //    _unitOfWork.TheoryTestRepository.Delete(theorytest.FirstOrDefault().Id);
+            //    string pathdelete = "";
+            //    pathdelete = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFilesTheory"));
+            //    if (System.IO.File.Exists(Path.Combine(pathdelete, theorytest.FirstOrDefault().Id + ".pdf")))
+            //    {
+            //        // If file found, delete it    
+            //        System.IO.File.Delete(Path.Combine(pathdelete, theorytest.FirstOrDefault().Id + ".pdf"));
+            //    }
+            //}
             try
             {
                 TheoryTest TheoryTest = new TheoryTest();
@@ -60,6 +61,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                 TheoryTest.TestSchedule = Sche;
                 TheoryTest.Name = Name;
                 _unitOfWork.TheoryTestRepository.Insert(TheoryTest);
+                //Must save chang first
                 _unitOfWork.SaveChange();
 
                 if (file.Length > 0 && file.ContentType == "application/pdf")
@@ -74,6 +76,25 @@ namespace InformaticsCertificationExamSystem.Controllers
                     {
                         await file.CopyToAsync(fileStream);
                     }
+                    //return Ok();
+                }
+                else
+                {
+                    return BadRequest("File Empty");
+                }
+                if (fileExel.Length > 0 /*&& fileExel.ContentType == "application/pdf"*/)
+                {
+
+                    path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFilesTheory"));
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    using (var fileStream = new FileStream(Path.Combine(path, TheoryTest.Id + ".xlsx"), FileMode.Create))
+                    {
+                        await fileExel.CopyToAsync(fileStream);
+                    }
+                    _unitOfWork.SaveChange();
                     return Ok();
                 }
                 else
@@ -104,7 +125,23 @@ namespace InformaticsCertificationExamSystem.Controllers
                 return BadRequest("file not found");
             }
         }
-
+        [HttpGet("DownloadExcelFile")]
+        public IActionResult DownloadExcelFile(int id)
+        {
+            try
+            {
+                string path = "";
+                path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFilesTheory"));
+                string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                path = Path.Combine(path, id + ".xlsx");
+                var stream = System.IO.File.ReadAllBytes(path);
+                return File(stream, mimeType, id + ".xlsx");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("file not found");
+            }
+        }
         [HttpGet("DownloadPdfFileByToken")]
         public IActionResult DownloadPdfFileByToken()
         {
@@ -118,10 +155,57 @@ namespace InformaticsCertificationExamSystem.Controllers
                 var idStudentClaim = claim
                     .Where(x => x.Type == "StudentId")
                     .FirstOrDefault();
+                var idStudent = Int32.Parse(idStudentClaim.Value);
+                if (idStudentClaim == null) { return BadRequest("Token Student null"); }
+                var idSchedules = (from student in _unitOfWork.StudentRepository.GetAll()
+                                  join schedule_room in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                                  on student.ExaminationRoom_TestScheduleId equals schedule_room.Id
+                                  where student.Id == Int32.Parse(idStudentClaim.Value)
+                                  select schedule_room.TestScheduleId);
+                if (!idSchedules.Any()) { return BadRequest("Id schedule test invalid"); }
+
+                
+
+                var theorytests = from testschedule in _unitOfWork.TestScheduleRepository.GetAll()
+                                  join theorytest in _unitOfWork.TheoryTestRepository.GetAll()
+                                  on testschedule.Id equals theorytest.TestScheduleId
+                                  where testschedule.Id == idSchedules.FirstOrDefault()
+                                  select theorytest.Id;
+                if (!theorytests.Any()) { return BadRequest("TestSchedule_Id invalid"); }
+
+                string path = "";
+                path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFilesTheory"));
+                string mimeType = "application/pdf";
+                path = Path.Combine(path, theorytests.ToArray()[idStudent % theorytests.Count()] + ".pdf");
+                var stream = System.IO.File.ReadAllBytes(path);
+                return File(stream, mimeType, theorytests.First() + ".pdf");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("file not found");
+            }
+        }
+
+        [HttpGet("DownloadExcelByToken")]
+        public IActionResult DownloadExcelByToken()
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                // Gets list of claims.
+                IEnumerable<Claim> claim = identity.Claims;
+                if (claim.Count() == 0) { return BadRequest("Token invalid"); }
+                // Gets name from claims. Generally it's an email address.
+                var idStudentClaim = claim
+                    .Where(x => x.Type == "StudentId")
+                    .FirstOrDefault();
+                var idStudent = Int32.Parse(idStudentClaim.Value);
+                if (idStudentClaim == null) { return BadRequest("Token Student null"); }
                 var idSchedule = (from student in _unitOfWork.StudentRepository.GetAll()
                                   join schedule_room in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
                                   on student.ExaminationRoom_TestScheduleId equals schedule_room.Id
-                                  select schedule_room.Id);
+                                  where student.Id == idStudent
+                                  select schedule_room.TestScheduleId);
                 if (!idSchedule.Any()) { return BadRequest("Id schedule test invalid"); }
 
 
@@ -134,10 +218,10 @@ namespace InformaticsCertificationExamSystem.Controllers
 
                 string path = "";
                 path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "UploadedFilesTheory"));
-                string mimeType = "application/pdf";
-                path = Path.Combine(path, theorytests.First() + ".pdf");
+                path = Path.Combine(path, theorytests.ToArray()[idStudent%theorytests.Count()] + ".xlsx");
+                string mimeType = "application/octet-stream";
                 var stream = System.IO.File.ReadAllBytes(path);
-                return File(stream, mimeType, theorytests.First() + ".pdf");
+                return File(stream, mimeType, theorytests.First() + ".xlsx");
             }
             catch (Exception e)
             {

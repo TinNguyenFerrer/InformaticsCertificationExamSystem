@@ -107,7 +107,6 @@ namespace InformaticsCertificationExamSystem.Controllers
             var Room = from room_schedule in _unitOfWork.DbContext.ExaminationRoom_TestSchedule
                        where room_schedule.TestSchedule.Id == idTestSchedule
                        select new { 
-                           room_schedule.TestSchedule.Name,
                            room_schedule.ExaminationRoom,
                            room_schedule.Supervisor.Teachers
                        };

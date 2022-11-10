@@ -23,6 +23,87 @@ namespace InformaticsCertificationExamSystem.Controllers
         }
 
         //======================--------------------------------------=====================
+        //[HttpPost("AutoCreateTestSchedule1")]
+        //public async Task<IActionResult> AutoCreateTestSchedule1(int IdExam)
+        //{
+        //    foreach (var Sched in _unitOfWork.TestScheduleRepository.GetAll())
+        //    {
+        //        if (Sched.ExaminationId == IdExam)
+        //        {
+        //            _unitOfWork.TestScheduleRepository.Delete(Sched.Id);
+        //        }
+        //    }
+        //    var ListStudent = (from students in _unitOfWork.StudentRepository.GetAll()
+        //                       where students.ExaminationId == IdExam
+        //                       select students).ToList();
+        //    var ListExaminationRoom = (from room in _unitOfWork.ExaminationRoomRepository.GetAll()
+        //                               where room.Locked == false
+        //                               select room).ToList();
+        //    // --------------------chia theo số lượng giáo viên--------------------------
+        //    var AllTeacher = from teachers in _unitOfWork.TeacherRepository.GetAll()
+        //                     where teachers.Locked == false
+        //                     select teachers;
+        //    ListExaminationRoom = ListExaminationRoom.GetRange(0, (int)AllTeacher.Count() / 2);
+        //    //--------------------------------===================-------------------------------
+        //    int SumCapacityRooms = 0;
+        //    foreach (var room in ListExaminationRoom)
+        //    {
+        //        SumCapacityRooms = SumCapacityRooms + room.Capacity;
+        //    }
+        //    Examination examination = _unitOfWork.ExaminationRepository.GetByID(IdExam);//null
+        //    DateTime dtEx = examination.StarTime;
+
+        //    int amountofSchedule = (int)Math.Ceiling((double)ListStudent.Count() / (double)SumCapacityRooms);
+
+        //    int[] clock = new int[2] {7, 8, 14 };
+        //    List<TestSchedule> listTestSchedule = new List<TestSchedule>();
+        //    for (int i = 0; i < amountofSchedule; i++)
+        //    {
+        //        TestSchedule testSchedule = new TestSchedule();
+        //        testSchedule.Name = "Ca " + (i + 1);
+        //        DateTime startime = dtEx.AddDays(i / 2).AddHours(clock[i % 2]);
+        //        testSchedule.StarTime = startime;
+        //        testSchedule.EndTime = startime.AddHours(3);
+        //        List<ExaminationRoom_TestSchedule> Exa_Tests = new List<ExaminationRoom_TestSchedule>();
+        //        foreach (var room in ListExaminationRoom)
+        //        {
+        //            ExaminationRoom_TestSchedule ex_test = new ExaminationRoom_TestSchedule();
+        //            ex_test.ExaminationRoom = room;
+        //            List<Student> LStudents = new List<Student>();
+        //            for (int j = 0; j < ex_test.ExaminationRoom.Capacity; j++)
+        //            {
+        //                if (ListStudent.Count() == 0) break;
+        //                LStudents.Add(ListStudent.FirstOrDefault());
+        //                ListStudent.Remove(ListStudent.FirstOrDefault());
+        //            }
+        //            ex_test.Students = LStudents;
+        //            Exa_Tests.Add(ex_test);
+        //            if (ListStudent.Count() == 0) break;
+        //        }
+        //        testSchedule.ExaminationRoom_TestSchedules = Exa_Tests;
+        //        testSchedule.ExaminationId = IdExam;
+        //        //listTestSchedule.Add(testSchedule);
+
+
+        //        _unitOfWork.TestScheduleRepository.Insert(testSchedule);
+        //    }
+        //    //foreach (TestSchedule testSchedule in listTestSchedule)
+        //    //{
+
+        //    //}
+        //    _unitOfWork.SaveChange();
+        //    //var dateStr = "2022-10-24 13:30";
+        //    //DateTime dt;
+        //    //DateTime.TryParse(dateStr, out dt);
+        //    //dt = DateTime.SpecifyKind(dt, DateTimeKind.Local);
+        //    //DateTimeOffset utcTime2 = dt;
+        //    //Console.WriteLine("f");
+        //    //Console.WriteLine(utcTime2.UtcDateTime);
+        //    //Console.WriteLine(dt);
+
+        //    return Ok();
+        //}
+
         [HttpPost("AutoCreateTestSchedule")]
         public async Task<IActionResult> AutoCreateTestSchedule(int IdExam)
         {
@@ -43,7 +124,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             var AllTeacher = from teachers in _unitOfWork.TeacherRepository.GetAll()
                              where teachers.Locked == false
                              select teachers;
-            ListExaminationRoom = ListExaminationRoom.GetRange(0, (int)AllTeacher.Count() / 2);
+            //ListExaminationRoom = ListExaminationRoom.GetRange(0, (int)AllTeacher.Count() / 2);
             //--------------------------------===================-------------------------------
             int SumCapacityRooms = 0;
             foreach (var room in ListExaminationRoom)
@@ -54,17 +135,44 @@ namespace InformaticsCertificationExamSystem.Controllers
             DateTime dtEx = examination.StarTime;
 
             int amountofSchedule = (int)Math.Ceiling((double)ListStudent.Count() / (double)SumCapacityRooms);
+            if (amountofSchedule > 4) return BadRequest("Too more student");
+            //Ca 1: 7h->9h15
+            TestSchedule testSchedule1 = new TestSchedule();
+            testSchedule1.Name = "Ca 1";
+            DateTime startime = dtEx.AddHours(7);
+            testSchedule1.StarTime = startime;
+            testSchedule1.EndTime = startime.AddHours(2).AddMinutes(15);
 
-            int[] clock = new int[2] { 8, 14 };
-            List<TestSchedule> listTestSchedule = new List<TestSchedule>();
-            for (int i = 0; i < amountofSchedule; i++)
+            //Ca 2: 9h20->11h35
+            TestSchedule testSchedule2 = new TestSchedule();
+            testSchedule2.Name = "Ca 2";
+            startime = dtEx.AddHours(9).AddMinutes(20);
+            testSchedule2.StarTime = startime;
+            testSchedule2.EndTime = startime.AddHours(2).AddMinutes(15);
+
+            //------(afternoon)-----
+            //Ca 3: 13h30->15h45 
+            TestSchedule testSchedule3 = new TestSchedule();
+            testSchedule3.Name = "Ca 3";
+            startime = dtEx.AddHours(13).AddMinutes(30);
+            testSchedule3.StarTime = startime;
+            testSchedule3.EndTime = startime.AddHours(2).AddMinutes(15);
+            //Ca 4:15h50->18h5 
+            TestSchedule testSchedule4 = new TestSchedule();
+            testSchedule4.Name = "Ca 4";
+            startime = dtEx.AddHours(15).AddMinutes(50);
+            testSchedule4.StarTime = startime;
+            testSchedule4.EndTime = startime.AddHours(2).AddMinutes(15);
+
+            List<TestSchedule> listSchedulesInit = new List<TestSchedule>();
+            listSchedulesInit.Add(testSchedule1);
+            listSchedulesInit.Add(testSchedule2);
+            listSchedulesInit.Add(testSchedule3);
+            listSchedulesInit.Add(testSchedule4);
+
+            foreach (var Schedule in listSchedulesInit)
             {
-
-                TestSchedule testSchedule = new TestSchedule();
-                testSchedule.Name = "Ca " + (i + 1);
-                DateTime startime = dtEx.AddDays(i / 2).AddHours(clock[i % 2]);
-                testSchedule.StarTime = startime;
-                testSchedule.EndTime = startime.AddHours(3);
+                if (ListStudent.Count() == 0) break;
                 List<ExaminationRoom_TestSchedule> Exa_Tests = new List<ExaminationRoom_TestSchedule>();
                 foreach (var room in ListExaminationRoom)
                 {
@@ -81,29 +189,18 @@ namespace InformaticsCertificationExamSystem.Controllers
                     Exa_Tests.Add(ex_test);
                     if (ListStudent.Count() == 0) break;
                 }
-                testSchedule.ExaminationRoom_TestSchedules = Exa_Tests;
-                testSchedule.ExaminationId = IdExam;
+                Schedule.ExaminationRoom_TestSchedules = Exa_Tests;
+                Schedule.ExaminationId = IdExam;
                 //listTestSchedule.Add(testSchedule);
 
 
-                _unitOfWork.TestScheduleRepository.Insert(testSchedule);
+                _unitOfWork.TestScheduleRepository.Insert(Schedule);
             }
-            //foreach (TestSchedule testSchedule in listTestSchedule)
-            //{
-
-            //}
             _unitOfWork.SaveChange();
-            //var dateStr = "2022-10-24 13:30";
-            //DateTime dt;
-            //DateTime.TryParse(dateStr, out dt);
-            //dt = DateTime.SpecifyKind(dt, DateTimeKind.Local);
-            //DateTimeOffset utcTime2 = dt;
-            //Console.WriteLine("f");
-            //Console.WriteLine(utcTime2.UtcDateTime);
-            //Console.WriteLine(dt);
 
             return Ok();
         }
+
         [HttpGet("GetAllByIdExamination")]
         public async Task<IActionResult> GetAllByIdExamination(int IdExam)
         {
