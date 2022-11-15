@@ -332,12 +332,14 @@ namespace InformaticsCertificationExamSystem.Controllers
                     {
                         Directory.CreateDirectory(path);
                     }
-                    path = Path.Combine(path, idstudentclaim.Value);
+                    var studentLogin = _unitOfWork.StudentRepository.GetByID(Int32.Parse(idstudentclaim.Value));
+                    if (studentLogin.HashCode == null) return BadRequest("HashCode null");
+                    path = Path.Combine(path, studentLogin.HashCode);
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);
                     }
-                    using (var fileStream = new FileStream(Path.Combine(path, idstudentclaim.Value+ ".xlsx"), FileMode.Create))
+                    using (var fileStream = new FileStream(Path.Combine(path, file.Name+ ".xlsx"), FileMode.Create))
                     {
                         await file.CopyToAsync(fileStream);
                     }
@@ -408,12 +410,14 @@ namespace InformaticsCertificationExamSystem.Controllers
                     {
                         Directory.CreateDirectory(path);
                     }
-                    path = Path.Combine(path, idstudentclaim.Value);
+                    var studentLogin = _unitOfWork.StudentRepository.GetByID(Int32.Parse(idstudentclaim.Value));
+                    if (studentLogin.HashCode == null) return BadRequest("HashCode null");
+                    path = Path.Combine(path, studentLogin.HashCode);
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);
                     }
-                    using (var fileStream = new FileStream(Path.Combine(path, idstudentclaim.Value + ".docx"), FileMode.Create))
+                    using (var fileStream = new FileStream(Path.Combine(path, file.Name + ".docx"), FileMode.Create))
                     {
                         await file.CopyToAsync(fileStream);
                     }
@@ -484,12 +488,14 @@ namespace InformaticsCertificationExamSystem.Controllers
                     {
                         Directory.CreateDirectory(path);
                     }
-                    path = Path.Combine(path, idstudentclaim.Value);
+                    var studentLogin = _unitOfWork.StudentRepository.GetByID(Int32.Parse(idstudentclaim.Value));
+                    if (studentLogin.HashCode == null) return BadRequest("HashCode null");
+                    path = Path.Combine(path, studentLogin.HashCode);
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);
                     }
-                    using (var fileStream = new FileStream(Path.Combine(path, idstudentclaim.Value + ".pptx"), FileMode.Create))
+                    using (var fileStream = new FileStream(Path.Combine(path, file.Name + ".pptx"), FileMode.Create))
                     {
                         await file.CopyToAsync(fileStream);
                     }

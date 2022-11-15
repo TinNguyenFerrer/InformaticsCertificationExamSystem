@@ -217,6 +217,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             _unitOfWork.SaveChange();
             return Ok();
         }
+        //==========================================================
 
         [HttpGet("CreatePassWord")]
         public IActionResult CreatePassWord(int IdExam)
@@ -224,6 +225,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             try
             {
                 var students = SummaryService.Randomize(_unitOfWork.StudentRepository.GetAllByIdExamination(IdExam));
+                students = students.OrderBy(item => item.ExaminationRoom_TestScheduleId);
                 var listRoom_Schedule = from testschedule in _unitOfWork.TestScheduleRepository.GetAll()
                                         join examroom_schedule in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
                                         on testschedule.Id equals examroom_schedule.TestScheduleId
@@ -242,7 +244,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                 {
 
                     var studentTemp = student;
-                    if (student.HashCode == null)
+                    if (student.HashCode != null)
                     {
                         var hashCodeFirst = SummaryService.IntToBase32(IdExam);
                         studentTemp.HashCode = hashCodeFirst+"_"+ hashCodeFinal;
@@ -327,6 +329,34 @@ namespace InformaticsCertificationExamSystem.Controllers
             _unitOfWork.StudentRepository.Update(student);
             _unitOfWork.SaveChange();
             return Ok("Update successful");
+        }
+
+        //get id Room_Schedule test by token student
+        [HttpGet("GetIdScheduleByToken")]
+        public IActionResult GetIdScheduleByToken()
+        {
+            try
+            {
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                // Gets list of claims.
+                IEnumerable<Claim> claim = identity.Claims;
+                if (claim.Count() == 0) { return BadRequest("Token invalid"); }
+                // Gets name from claims. Generally it's an email address.
+                var idStudentClaim = claim
+                    .Where(x => x.Type == "StudentId")
+                    .FirstOrDefault();
+                var idSchedule = (from student in _unitOfWork.StudentRepository.GetAll()
+                                  join schedule_room in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                                  on student.ExaminationRoom_TestScheduleId equals schedule_room.Id
+                                  select schedule_room.TestScheduleId);
+                if (!idSchedule.Any()) { return BadRequest("Id schedule test invalid"); }
+
+                return Ok(idSchedule.FirstOrDefault());
+            }
+            catch (Exception e)
+            {
+                return BadRequest("file not found");
+            }
         }
 
     }

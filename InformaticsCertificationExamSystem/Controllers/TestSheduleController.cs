@@ -2,10 +2,17 @@
 using InformaticsCertificationExamSystem.DAL;
 using InformaticsCertificationExamSystem.Data;
 using InformaticsCertificationExamSystem.Models;
+using InformaticsCertificationExamSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+
+using Ionic.Zip;
+
+//using System.IO.Compression;
+
+//using ICSharpCode.SharpZipLib.Zip;
 
 namespace InformaticsCertificationExamSystem.Controllers
 {
@@ -114,9 +121,10 @@ namespace InformaticsCertificationExamSystem.Controllers
                     _unitOfWork.TestScheduleRepository.Delete(Sched.Id);
                 }
             }
-            var ListStudent = (from students in _unitOfWork.StudentRepository.GetAll()
-                               where students.ExaminationId == IdExam
-                               select students).ToList();
+            var ListStudent = SummaryService.Randomize((from students in _unitOfWork.StudentRepository.GetAll()
+                                                        where students.ExaminationId == IdExam
+                                                        select students)).ToList();
+
             var ListExaminationRoom = (from room in _unitOfWork.ExaminationRoomRepository.GetAll()
                                        where room.Locked == false
                                        select room).ToList();
@@ -249,7 +257,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             var idTeacherClaim = claim
                 .Where(x => x.Type == "TeacherId")
                 .FirstOrDefault();
-            Console.WriteLine("============================ID======================---------------"+idTeacherClaim);
+            Console.WriteLine("============================ID======================---------------" + idTeacherClaim);
             //get all Superviser by id teacher
             var supervisers = (from teacher in _unitOfWork.DbContext.Teachers
                                where teacher.Id.ToString() == idTeacherClaim.Value
@@ -326,6 +334,36 @@ namespace InformaticsCertificationExamSystem.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("{id}/DownloadSubmitFile")]
+        public async Task<IActionResult> DownloadSubmitFile(int id)
+        {
+            try
+            {
+                //string archiveName = String.Format("archive-{0}.zip",
+                //DateTime.Now.ToString("yyyy-MMM-dd-HHmmss"));
+                var testSchedule = _unitOfWork.TestScheduleRepository.GetByID(id);
+                if (testSchedule == null) return NotFound("Id test schedule not found");
+                var path = Path.Combine(Environment.CurrentDirectory, "FileSubmit");
+                path = Path.Combine(path, id.ToString());
+                var zipFolder = Path.GetFullPath(path);
+
+                MemoryStream outputStream = new MemoryStream();
+                using (ZipFile zip = new ZipFile())
+                {
+                    zip.AddDirectory(zipFolder);
+                    zip.Save(outputStream);
+                }
+                outputStream.Seek(0, SeekOrigin.Begin);
+                return File(outputStream, "application/zip", $"{testSchedule.Name}.zip");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+
     }
 }
 

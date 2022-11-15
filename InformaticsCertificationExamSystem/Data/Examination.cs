@@ -45,6 +45,9 @@ namespace InformaticsCertificationExamSystem.Data
 
         [Column("MinimumPracticeScore")]
         public float MinimumPracticeMark { get; set; }
+        //-------------------------------------------------------------------------
+        [DefaultValue(false)]
+        public Boolean IsCreateScorecard { get; set; } = false;
 
         //[Column("ReviewTime")]
         //[DefaultValue(false)]
