@@ -3,6 +3,7 @@ using ClosedXML.Excel;
 using InformaticsCertificationExamSystem.DAL;
 using InformaticsCertificationExamSystem.Data;
 using InformaticsCertificationExamSystem.Models;
+using InformaticsCertificationExamSystem.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -108,7 +109,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                     {
                         Directory.CreateDirectory(path);
                     }
-                    path = Path.Combine(path, room_schedule.ExaminationRoomId.ToString());
+                    path = Path.Combine(path, SummaryService.IntToBase32(room_schedule.ExaminationRoomId + room_schedule.TestScheduleId + 12));
                     if (!Directory.Exists(Path.GetFullPath(path)))
                     {
                         Directory.CreateDirectory(path);

@@ -8,15 +8,19 @@
 
   <ItemGroup>
     <Compile Remove="DAL\Examination_ExaminationRoomRepository\**" />
+    <Compile Remove="FileSubmit\40\GUZQ\**" />
     <Compile Remove="Services\Core\**" />
     <Compile Remove="Services\Persistence\**" />
     <Content Remove="DAL\Examination_ExaminationRoomRepository\**" />
+    <Content Remove="FileSubmit\40\GUZQ\**" />
     <Content Remove="Services\Core\**" />
     <Content Remove="Services\Persistence\**" />
     <EmbeddedResource Remove="DAL\Examination_ExaminationRoomRepository\**" />
+    <EmbeddedResource Remove="FileSubmit\40\GUZQ\**" />
     <EmbeddedResource Remove="Services\Core\**" />
     <EmbeddedResource Remove="Services\Persistence\**" />
     <None Remove="DAL\Examination_ExaminationRoomRepository\**" />
+    <None Remove="FileSubmit\40\GUZQ\**" />
     <None Remove="Services\Core\**" />
     <None Remove="Services\Persistence\**" />
   </ItemGroup>
@@ -44,6 +48,7 @@
 
   <ItemGroup>
     <!--<Folder Include="FileSubmit\**" />-->
+    <Folder Include="FileSubmit\40\" />
     <Folder Include="UploadedFilesTheory\" />
   </ItemGroup>
 

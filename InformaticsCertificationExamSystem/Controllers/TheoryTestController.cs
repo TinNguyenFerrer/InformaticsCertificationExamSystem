@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using InformaticsCertificationExamSystem.Services;
 
 namespace InformaticsCertificationExamSystem.Controllers
 {
@@ -325,9 +326,10 @@ namespace InformaticsCertificationExamSystem.Controllers
                                  join exam_schedu in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
                                  on student.ExaminationRoom_TestScheduleId equals exam_schedu.Id
                                  where student.Id.ToString() == idstudentclaim.Value
-                                 select exam_schedu.ExaminationRoomId;
+                                 select exam_schedu;
                     if (!idroom.Any()) { return BadRequest("Get id room failure"); }
-                    path = Path.Combine(path, idroom.First().ToString());//room
+                    path = Path.Combine(path, SummaryService.IntToBase32(idroom.First().ExaminationRoomId + idroom.First().TestScheduleId + 12));//path to file of each room 
+                    
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);
@@ -403,9 +405,9 @@ namespace InformaticsCertificationExamSystem.Controllers
                                  join exam_schedu in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
                                  on student.ExaminationRoom_TestScheduleId equals exam_schedu.Id
                                  where student.Id.ToString() == idstudentclaim.Value
-                                 select exam_schedu.ExaminationRoomId;
+                                 select exam_schedu;
                     if (!idroom.Any()) { return BadRequest("Get id room failure"); }
-                    path = Path.Combine(path, idroom.First().ToString());//room
+                    path = Path.Combine(path, SummaryService.IntToBase32(idroom.First().ExaminationRoomId + idroom.First().TestScheduleId + 12));//path to file of each room 
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);
@@ -481,9 +483,9 @@ namespace InformaticsCertificationExamSystem.Controllers
                                  join exam_schedu in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
                                  on student.ExaminationRoom_TestScheduleId equals exam_schedu.Id
                                  where student.Id.ToString() == idstudentclaim.Value
-                                 select exam_schedu.ExaminationRoomId;
+                                 select exam_schedu;
                     if (!idroom.Any()) { return BadRequest("Get id room failure"); }
-                    path = Path.Combine(path, idroom.First().ToString());//room
+                    path = Path.Combine(path, SummaryService.IntToBase32(idroom.First().ExaminationRoomId + idroom.First().TestScheduleId + 12));//path to file of each room 
                     if (!Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);

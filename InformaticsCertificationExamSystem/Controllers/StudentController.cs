@@ -225,7 +225,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             try
             {
                 var students = SummaryService.Randomize(_unitOfWork.StudentRepository.GetAllByIdExamination(IdExam));
-                students = students.OrderBy(item => item.ExaminationRoom_TestScheduleId);
+                //students = students.OrderBy(item => item.ExaminationRoom_TestScheduleId);
                 var listRoom_Schedule = from testschedule in _unitOfWork.TestScheduleRepository.GetAll()
                                         join examroom_schedule in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
                                         on testschedule.Id equals examroom_schedule.TestScheduleId
@@ -235,28 +235,34 @@ namespace InformaticsCertificationExamSystem.Controllers
                 //ramdom number
                 var rdom = new Random();
                 //int t = (IdExam % 10*10000)+ IdExam*3;
-                int hashCodeFinal = rdom.Next(10000, 98000); 
+                
                 if (!students.Any())
                 {
                     return BadRequest("Examination not have Student");
                 }
                 foreach (var student in students)
                 {
-
+                    int hashCodeFinal = rdom.Next(10000, 19999);
                     var studentTemp = student;
-                    if (student.HashCode != null)
+                    if (student.HashCode == null)
                     {
-                        var hashCodeFirst = SummaryService.IntToBase32(IdExam);
-                        studentTemp.HashCode = hashCodeFirst+"_"+ hashCodeFinal;
-                        hashCodeFinal++;
+                        var hashCodeFirst = SummaryService.IntToBase32(student.Id*3+5);
+                        if (hashCodeFirst.Length <= 8)
+                        {
+                            studentTemp.HashCode = hashCodeFirst + (SummaryService.IntToBase32(hashCodeFinal)).Substring(0, 8 - hashCodeFirst.Length);
+                        }else
+                        {
+                            studentTemp.HashCode = hashCodeFirst;
+                        }
+                        hashCodeFinal = hashCodeFinal+3;
                     }
                     if (student.IdentifierCode == null)
                     {
-                        if (student.StudentTypeId == 1)
-                        {
-                            student.IdentifierCode = "HV" + (student.Id + 1000).ToString();
-                        }
-                        else
+                        //if (student.StudentTypeId == 1)
+                        //{
+                        //    student.IdentifierCode = "HV" + (student.Id + 1000).ToString();
+                        //}
+                        //else
                         {
                             student.IdentifierCode = "TD" + (student.Id + 1000).ToString();
                         }
@@ -277,19 +283,20 @@ namespace InformaticsCertificationExamSystem.Controllers
                 {
                     Directory.CreateDirectory(path);
                 }
+                var random = new Random();
+                
                 foreach (var room_schedu in listRoom_Schedule)
                 {
-                    path = Path.Combine(path, room_schedu.TestScheduleId.ToString());
-                    if (!Directory.Exists(path))
+                    var pathSchedule = Path.Combine(path, room_schedu.TestScheduleId.ToString());
+                    if (!Directory.Exists(pathSchedule))
                     {
-                        Directory.CreateDirectory(path);
+                        Directory.CreateDirectory(pathSchedule);
                     }
-                    path = Path.Combine(path, room_schedu.ExaminationRoomId.ToString());
-                    if (!Directory.Exists(path))
+                    pathSchedule = Path.Combine(pathSchedule, SummaryService.IntToBase32(room_schedu.ExaminationRoomId + room_schedu.TestScheduleId+12));
+                    if (!Directory.Exists(pathSchedule))
                     {
-                        Directory.CreateDirectory(path);
+                        Directory.CreateDirectory(pathSchedule);
                     }
-
 
                 }
 

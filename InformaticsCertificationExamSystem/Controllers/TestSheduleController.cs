@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 using Ionic.Zip;
+using System.Text.Json;
 
 //using System.IO.Compression;
 
@@ -340,7 +341,7 @@ namespace InformaticsCertificationExamSystem.Controllers
         {
             try
             {
-                //string archiveName = String.Format("archive-{0}.zip",
+                string archiveName = String.Format("archive.zip");
                 //DateTime.Now.ToString("yyyy-MMM-dd-HHmmss"));
                 var testSchedule = _unitOfWork.TestScheduleRepository.GetByID(id);
                 if (testSchedule == null) return NotFound("Id test schedule not found");
@@ -363,6 +364,33 @@ namespace InformaticsCertificationExamSystem.Controllers
             }
         }
 
+        [HttpPost("dowload")]
+        public IActionResult Download(int id)
+        {
+
+            //DateTime.Now.ToString("yyyy-MMM-dd-HHmmss"));
+            var testSchedule = _unitOfWork.TestScheduleRepository.GetByID(id);
+            if (testSchedule == null) return NotFound("Id test schedule not found");
+            var path = Path.Combine(Environment.CurrentDirectory, "FileSubmit");
+            string archive = Path.Combine(path,String.Format("archive.zip"));
+            path = Path.Combine(path, id.ToString());
+            var zipFolder = Path.GetFullPath(path);
+
+            // clear any existing archive
+            if (System.IO.File.Exists(archive))
+            {
+                System.IO.File.Delete(archive);
+            }
+            // empty the temp folder
+
+
+            // create a new archive
+            System.IO.Compression.ZipFile.CreateFromDirectory(zipFolder, archive);
+            var stream = System.IO.File.ReadAllBytes(archive);
+            return File(stream, "application/zip", $"{testSchedule.Name}.zip");
+
+            //return File(archive, "application/zip", "archive.zip");
+        }
 
     }
 }
