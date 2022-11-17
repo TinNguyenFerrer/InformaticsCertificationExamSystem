@@ -17,7 +17,8 @@ builder.Services.AddCors(options =>
                           {
                               policy.WithOrigins("*")
                                                   .AllowAnyHeader()
-                                                  .AllowAnyMethod();
+                                                  .AllowAnyMethod()
+                                                  .WithExposedHeaders("*");
                                                   //.WithExposedHeaders("content-disposition");
 
                           });
@@ -106,6 +107,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("MyCORS");
+
 app.UseAuthentication();
 app.UseAuthorization();
 

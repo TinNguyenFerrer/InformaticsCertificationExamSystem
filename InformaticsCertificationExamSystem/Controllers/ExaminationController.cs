@@ -86,7 +86,7 @@ namespace InformaticsCertificationExamSystem.Controllers
         }
 
         [HttpPut("{examId}/CreateScorecard")]
-        public async Task<IActionResult> CreateScorecard( int examId)
+        public async Task<IActionResult> CreateScorecard(int examId)
         {
             try
             {
@@ -115,8 +115,8 @@ namespace InformaticsCertificationExamSystem.Controllers
                         Directory.CreateDirectory(path);
                     }
                     var stude = (from student in _unitOfWork.StudentRepository.GetAll()
-                                where student.ExaminationRoom_TestScheduleId == room_schedule.Id
-                                select student).OrderBy(item=>item.HashCode);
+                                 where student.ExaminationRoom_TestScheduleId == room_schedule.Id
+                                 select student).OrderBy(item => item.HashCode);
                     //create file excel
                     using (var workbook = new XLWorkbook())
                     {
@@ -129,12 +129,12 @@ namespace InformaticsCertificationExamSystem.Controllers
                         worksheet.Cell("E1").Value = "Window";
                         worksheet.Cell("F1").Value = "Result";
                         //Background color
-                        worksheet.Cell("A1").Style.Fill.BackgroundColor = XLColor.FromArgb(0,172,78);
-                        worksheet.Cell("B1").Style.Fill.BackgroundColor = XLColor.FromArgb(0, 172, 78); 
-                        worksheet.Cell("C1").Style.Fill.BackgroundColor = XLColor.FromArgb(0,172,78);                    
-                        worksheet.Cell("D1").Style.Fill.BackgroundColor = XLColor.FromArgb(0,172,78);
-                        worksheet.Cell("E1").Style.Fill.BackgroundColor = XLColor.FromArgb(0,172,78);                     
-                        worksheet.Cell("F1").Style.Fill.BackgroundColor = XLColor.FromArgb(0,172,78);
+                        worksheet.Cell("A1").Style.Fill.BackgroundColor = XLColor.FromArgb(0, 172, 78);
+                        worksheet.Cell("B1").Style.Fill.BackgroundColor = XLColor.FromArgb(0, 172, 78);
+                        worksheet.Cell("C1").Style.Fill.BackgroundColor = XLColor.FromArgb(0, 172, 78);
+                        worksheet.Cell("D1").Style.Fill.BackgroundColor = XLColor.FromArgb(0, 172, 78);
+                        worksheet.Cell("E1").Style.Fill.BackgroundColor = XLColor.FromArgb(0, 172, 78);
+                        worksheet.Cell("F1").Style.Fill.BackgroundColor = XLColor.FromArgb(0, 172, 78);
                         //Border
                         worksheet.Cell("A1").Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                         worksheet.Cell("A1").Style.Border.OutsideBorderColor = XLColor.Black;
@@ -191,7 +191,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                         //}
                     }
                 }
-                
+
                 _unitOfWork.SaveChange();
                 return Ok();
             }
@@ -208,6 +208,31 @@ namespace InformaticsCertificationExamSystem.Controllers
             {
                 var testSchedules = _mapper.Map<IEnumerable<TestScheduleModel>>(_unitOfWork.TestScheduleRepository.GetAllByIdExamination(id));
                 return Ok(testSchedules);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+        [HttpGet("{id}/student-accounts-for-export")]
+        public IActionResult GetStudentsForExport(int id)
+        {
+            try
+            {
+                var allStudents = from students in _unitOfWork.StudentRepository.GetAllByIdExamination(id)
+                                  join examRoom_testSchedule in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                                  on students.ExaminationRoom_TestScheduleId equals examRoom_testSchedule.Id
+                                  join testSchedule in _unitOfWork.TestScheduleRepository.GetAll()
+                                  on examRoom_testSchedule.TestScheduleId equals testSchedule.Id
+                                  select new
+                                  {
+                                      userName = students.Name,
+                                      password = students.Password,
+                                      name = students.Name,
+                                      email = students.Email,
+                                      testScheduleName = testSchedule.Name.Replace(" ", "")
+                                  };
+                return Ok(allStudents.ToArray());
             }
             catch (Exception e)
             {
