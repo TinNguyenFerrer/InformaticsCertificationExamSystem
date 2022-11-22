@@ -46,7 +46,9 @@ namespace InformaticsCertificationExamSystem.Controllers
             try
             {
                 //Console.WriteLine(NewExamination.GradingDeadline);
-                _unitOfWork.ExaminationRepository.Insert(_mapper.Map<Examination>(NewExamination));
+                var t = _mapper.Map<Examination>(NewExamination);
+                t.ExamCode = SummaryService.IntToBase32(_unitOfWork.DbContext.Examinations.Max(x => x.Id))+ _unitOfWork.DbContext.Examinations.Max(x => x.Id);
+                _unitOfWork.ExaminationRepository.Insert(t);
                 _unitOfWork.SaveChange();
                 return Ok();
             }
@@ -224,15 +226,43 @@ namespace InformaticsCertificationExamSystem.Controllers
                                   on students.ExaminationRoom_TestScheduleId equals examRoom_testSchedule.Id
                                   join testSchedule in _unitOfWork.TestScheduleRepository.GetAll()
                                   on examRoom_testSchedule.TestScheduleId equals testSchedule.Id
+                                  join examination in _unitOfWork.ExaminationRepository.GetAll()
+                                  on  id equals examination.Id 
                                   select new
                                   {
-                                      userName = students.Name,
+                                      userName = students.IdentifierCode.ToLower(),
                                       password = students.Password,
                                       name = students.Name,
                                       email = students.Email,
-                                      testScheduleName = testSchedule.Name.Replace(" ", "")
+                                      testScheduleName = testSchedule.Name.Replace(" ", ""),
+                                      examCode = examination.ExamCode
                                   };
                 return Ok(allStudents.ToArray());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+        [HttpGet("{id}/import-theoretical-mark")]
+        public IActionResult ImportTheoreticalMark(int id)
+        {
+            try
+            {
+                var result = from students in _unitOfWork.StudentRepository.GetAllByIdExamination(id)
+                                 join finalresult in _unitOfWork.FinalResultRepository.GetAll()
+                                 on students.FinalResultId equals finalresult.Id
+                                  select new
+                                  {
+                                      students.Id,
+                                      students.Name,
+                                      students.IdentifierCode,
+                                      finalresult.Practice,
+                                      finalresult.Excel,
+                                      finalresult.PowerPoint,
+                                      finalresult.Word
+                                  };
+                return Ok(result.ToArray());
             }
             catch (Exception e)
             {

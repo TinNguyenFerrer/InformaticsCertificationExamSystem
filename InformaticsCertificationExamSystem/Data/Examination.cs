@@ -7,11 +7,16 @@ using Microsoft.EntityFrameworkCore;
 namespace InformaticsCertificationExamSystem.Data
 {
     [Table("Examination")]
+    [Index(nameof(ExamCode), IsUnique = true)]
     public class Examination
     {
         [Column("ExaminationID")]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity), Key]
         public int Id { get; set; }
+
+        [MaxLength(20)]
+        [Required]
+        public string? ExamCode { get; set; }
 
         [Column("Name")]
         [MaxLength(255)]
