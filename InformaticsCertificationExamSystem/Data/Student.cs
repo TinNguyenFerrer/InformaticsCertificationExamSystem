@@ -9,6 +9,7 @@ namespace InformaticsCertificationExamSystem.Data
     [Table("Student")]
     [Index(nameof(IdentifierCode), IsUnique = true)]
     [Index(nameof(HashCode), IsUnique = true)]
+    [Index(nameof(Email), IsUnique = true)]
     public class Student
     {
         [Column("StudentID")]

@@ -4,6 +4,7 @@ using InformaticsCertificationExamSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InformaticsCertificationExamSystem.Migrations
 {
     [DbContext(typeof(InformaticsCertificationExamSystem_DBContext))]
-    partial class InformaticsCertificationExamSystem_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20221123112807_db15.39")]
+    partial class db1539
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,7 +187,7 @@ namespace InformaticsCertificationExamSystem.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("InconsistentMarkID");
+                        .HasColumnName("ID");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
@@ -202,9 +204,6 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .HasColumnType("float");
 
                     b.Property<double>("Theory")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Window")
                         .HasColumnType("float");
 
                     b.Property<double>("Word")

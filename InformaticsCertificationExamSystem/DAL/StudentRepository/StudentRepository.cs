@@ -14,6 +14,10 @@ namespace InformaticsCertificationExamSystem.DAL
                            select students;
             return Students.ToList();
         }
+        public Student? GetByEmail(string Email)
+        {
+            return Dbset.FirstOrDefault(e=>e.Email==Email);
+        }
         //public IEnumerable<Student> GetAllByIdTestSchedule(int Id)
         //{
         //    var Students = from students in this.DbContext.Students

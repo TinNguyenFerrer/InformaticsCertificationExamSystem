@@ -4,6 +4,7 @@ using InformaticsCertificationExamSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InformaticsCertificationExamSystem.Migrations
 {
     [DbContext(typeof(InformaticsCertificationExamSystem_DBContext))]
-    partial class InformaticsCertificationExamSystem_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20221123104159_db15.2")]
+    partial class db152
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -189,26 +191,23 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<double>("Excel")
-                        .HasColumnType("float");
+                    b.Property<float>("Excel")
+                        .HasColumnType("real");
 
-                    b.Property<double>("FinalMark")
-                        .HasColumnType("float");
+                    b.Property<float>("FinalMark")
+                        .HasColumnType("real");
 
-                    b.Property<double>("PowerPoint")
-                        .HasColumnType("float");
+                    b.Property<float>("PowerPoint")
+                        .HasColumnType("real");
 
-                    b.Property<double>("Practice")
-                        .HasColumnType("float");
+                    b.Property<float>("Practice")
+                        .HasColumnType("real");
 
-                    b.Property<double>("Theory")
-                        .HasColumnType("float");
+                    b.Property<float>("Theory")
+                        .HasColumnType("real");
 
-                    b.Property<double>("Window")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Word")
-                        .HasColumnType("float");
+                    b.Property<float>("Word")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
@@ -731,7 +730,8 @@ namespace InformaticsCertificationExamSystem.Migrations
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.FinalResult", b =>
                 {
-                    b.Navigation("Student");
+                    b.Navigation("Student")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("InformaticsCertificationExamSystem.Data.InconsistentMark", b =>
