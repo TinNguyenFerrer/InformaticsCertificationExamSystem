@@ -55,6 +55,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                 foreach (var t in dataResult)
                 {
                     var student = _unitOfWork.StudentRepository.GetByEmail(t.Email);
+                    var exam = _unitOfWork.ExaminationRepository.GetByID(student.ExaminationId);
                     if (student == null) continue;
                     FinalResult resultStudent = _unitOfWork.FinalResultRepository.GetByIdStudent(student.Id);
                     if (resultStudent == null) continue;
@@ -63,7 +64,15 @@ namespace InformaticsCertificationExamSystem.Controllers
                     ci.NumberFormat.NumberDecimalSeparator = ",";
 
                     resultStudent.Theory = double.Parse(t.Theory, ci);
-                    resultStudent.FinalMark = resultStudent.Practice + resultStudent.Theory;
+                    resultStudent.FinalMark = (resultStudent.Practice + resultStudent.Theory) / 2;
+                    if (resultStudent.Theory >= exam.MinimumTheoreticalMark || resultStudent.Practice >= exam.MinimumPracticeMark)
+                    {
+                        resultStudent.ResultStatus = true;
+                    }
+                    else
+                    {
+                        resultStudent.ResultStatus = false;
+                    }
                     _unitOfWork.FinalResultRepository.Update(resultStudent);
                 }
                 //dataResult.ToList().ForEach(i => Console.WriteLine($"Email:  {i.Email}\t ly thuyet{i.Practice}"));

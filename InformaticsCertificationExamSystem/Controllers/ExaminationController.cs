@@ -15,7 +15,7 @@ using System.Text;
 
 namespace InformaticsCertificationExamSystem.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ExaminationController : ControllerBase
@@ -268,7 +268,8 @@ namespace InformaticsCertificationExamSystem.Controllers
                                  finalresult.Excel,
                                  finalresult.PowerPoint,
                                  finalresult.Word,
-                                 finalresult.FinalMark
+                                 finalresult.FinalMark,
+                                 finalresult.ResultStatus
                              };
                 return Ok(result.ToArray());
             }
