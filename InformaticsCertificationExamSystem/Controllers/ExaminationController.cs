@@ -15,7 +15,7 @@ using System.Text;
 
 namespace InformaticsCertificationExamSystem.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ExaminationController : ControllerBase
@@ -36,7 +36,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             return Ok(AllExamination.ToArray());
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAllExamination(int id)
+        public async Task<IActionResult> GetExamination(int id)
         {
 
             var Examination = _unitOfWork.ExaminationRepository.GetByID(id);

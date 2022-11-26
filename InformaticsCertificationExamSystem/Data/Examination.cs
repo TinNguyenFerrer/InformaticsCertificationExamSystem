@@ -34,10 +34,10 @@ namespace InformaticsCertificationExamSystem.Data
         [Required]
         public DateTime StarTime { get; set; }
 
-        [Column("EndTime")]
-        [DisplayFormat(DataFormatString = "{MM/dd/yyyy}", ApplyFormatInEditMode = true)]
-        [Required]
-        public DateTime EndTime { get; set; }
+        //[Column("EndTime")]
+        //[DisplayFormat(DataFormatString = "{MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        //[Required]
+        //public DateTime EndTime { get; set; }
 
         [Column("Location")]
         [MaxLength(500)]
@@ -59,10 +59,10 @@ namespace InformaticsCertificationExamSystem.Data
         //[Required]
         //public Boolean IsBlocked { get; set; }
 
-        [Column("GradingDeadline")]
-        [DisplayFormat(DataFormatString = "{MM/dd/yyyy}", ApplyFormatInEditMode = true)]
-        [Required]
-        public DateTime GradingDeadline { get; set; }
+        //[Column("GradingDeadline")]
+        //[DisplayFormat(DataFormatString = "{MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        //[Required]
+        //public DateTime GradingDeadline { get; set; }
 
         
         [JsonIgnore]

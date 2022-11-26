@@ -66,10 +66,30 @@ namespace InformaticsCertificationExamSystem.Controllers
             }
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteExamination(int id)
+        public async Task<IActionResult> DeleteExaminationRoom(int id)
         {
             try
             {
+                var t = (from room in _unitOfWork.ExaminationRoomRepository.GetAll()
+                         join exam_Schedu in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                         on room.Id equals exam_Schedu.ExaminationRoomId
+                         join schedule in _unitOfWork.TestScheduleRepository.GetAll()
+                         on exam_Schedu.TestScheduleId equals schedule.Id
+                         join exam in _unitOfWork.ExaminationRepository.GetAll()
+                         on schedule.ExaminationId equals exam.Id
+                         where room.Id == id
+                         select new
+                         {
+                             exam.Name,
+                             exam.Id,
+                             exam.ExamCode
+                         }).ToList();
+                if (t.Count() != 0) return BadRequest(new
+                {
+                    code = 405,
+                    Message = "Room used by Examination",
+                    Examination = t
+                });
                 _unitOfWork.ExaminationRoomRepository.Delete(id);
                 _unitOfWork.SaveChange();
                 return Ok();
