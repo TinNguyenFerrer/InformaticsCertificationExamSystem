@@ -18,6 +18,10 @@ namespace InformaticsCertificationExamSystem.DAL
         {
             return Dbset.FirstOrDefault(e=>e.Email==Email);
         }
+        public Student? GetByHashCode(string HashCode)
+        {
+            return Dbset.FirstOrDefault(e => e.HashCode == HashCode);
+        }
         //public IEnumerable<Student> GetAllByIdTestSchedule(int Id)
         //{
         //    var Students = from students in this.DbContext.Students

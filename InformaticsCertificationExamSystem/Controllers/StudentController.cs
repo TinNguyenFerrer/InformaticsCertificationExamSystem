@@ -264,7 +264,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                         //}
                         //else
                         {
-                            student.IdentifierCode = "TD" + (student.Id + 1000).ToString();
+                            student.IdentifierCode = "td" + (student.Id + 1000).ToString();
                         }
                     }
                     if (student.Password == null)

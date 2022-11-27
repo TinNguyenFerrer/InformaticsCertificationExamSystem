@@ -24,6 +24,8 @@ namespace InformaticsCertificationExamSystem.Data
 
         [DefaultValue(false)]
         public Boolean FilePowerPoint { get; set; } = false;
+        [DefaultValue(false)]
+        public Boolean FileWindow { get; set; } = false;
 
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm:ss}", ApplyFormatInEditMode = true)]
         //[Required]

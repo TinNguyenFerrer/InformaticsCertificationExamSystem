@@ -13,8 +13,11 @@ namespace InformaticsCertificationExamSystem.Data
         public double Excel { get; set; } = 0;
         public double PowerPoint { get; set; } = 0;
         public double Window { get; set; } = 0;
+        [Range(0,10)]
         public double Theory { get; set; } = 0;
+        [Range(0, 10)]
         public double Practice { get; set; } = 0;
+        [Range(0, 10)]
         public double FinalMark { get; set; } = 0;
         [DefaultValue(false)]
         [Description("true: 'Pass' false: 'fail'")]

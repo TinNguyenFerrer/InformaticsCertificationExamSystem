@@ -77,7 +77,7 @@ namespace InformaticsCertificationExamSystem.Controllers
         public IActionResult CreateTokenStudent(UserLoginModel user)
         {
             var students = (from student in _unitOfWork.StudentRepository.GetAll()
-                               where student.IdentifierCode == user.username && student.Password == user.password
+                               where student.IdentifierCode.ToLower() == user.username.ToLower() && student.Password == user.password
                            select student);
             if (!students.Any())
             {

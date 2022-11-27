@@ -6,6 +6,7 @@ namespace InformaticsCertificationExamSystem.DAL
     {
         public IEnumerable<Student> GetAllByIdExamination(int Id);
         public Student? GetByEmail(string Email);
+        public Student? GetByHashCode(string HashCode);
         //public IEnumerable<Student> GetAllByIdTestSchedule(int Id);
     }
 }
