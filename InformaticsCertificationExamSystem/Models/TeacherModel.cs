@@ -24,6 +24,7 @@ namespace InformaticsCertificationExamSystem.Models
         public string IdentifierCode { get; set; }
 
         public string Password { get; set; }
+        public Boolean Locked { get; set; } = false;
 
         [MaxLength(20)]
         public string PhoneNumber { get; set;}

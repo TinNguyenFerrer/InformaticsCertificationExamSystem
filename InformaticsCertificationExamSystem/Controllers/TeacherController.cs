@@ -13,7 +13,7 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class TeacherController : ControllerBase
     {
 
@@ -106,6 +106,27 @@ namespace InformaticsCertificationExamSystem.Controllers
             if (idTeacherClaim == null) { return BadRequest("Id teacher null"); }
             var result = _unitOfWork.TeacherRepository.GetByID(Int32.Parse(idTeacherClaim.Value));
             return Ok(_mapper.Map<TeacherModel>(result));
+        }
+        [HttpPut("{id}/Lock")]
+        public IActionResult LockTeacher(int id)
+        {
+            if (_unitOfWork.TeacherRepository.LockTeacher(id))
+            {
+                _unitOfWork.SaveChange();
+                return Ok();
+            }
+            return BadRequest("Not found Teacher  ");
+        }
+
+        [HttpPut("{id}/UnLock")]
+        public IActionResult UnLockTeacher(int id)
+        {
+            if (_unitOfWork.TeacherRepository.UnLockTeacher(id))
+            {
+                _unitOfWork.SaveChange();
+                return Ok();
+            }
+            return BadRequest("Not found Teacher  ");
         }
     }
 }

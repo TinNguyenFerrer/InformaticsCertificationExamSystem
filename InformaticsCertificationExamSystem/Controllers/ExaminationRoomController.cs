@@ -100,7 +100,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             }
         }
 
-        [HttpGet("LockExaminationRoom")]
+        [HttpPut("LockExaminationRoom")]
         public IActionResult LockExaminationRoom(int id)
         {
             if (_unitOfWork.ExaminationRoomRepository.LockExaminationRoom(id))
@@ -111,7 +111,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             return BadRequest("Not found Room  ");
         }
 
-        [HttpGet("UnLockExaminationRoom")]
+        [HttpPut("UnLockExaminationRoom")]
         public IActionResult UnLockExaminationRoom(int id)
         {
             if (_unitOfWork.ExaminationRoomRepository.UnLockExaminationRoom(id))
