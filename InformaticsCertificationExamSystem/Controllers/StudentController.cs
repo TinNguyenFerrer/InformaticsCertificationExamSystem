@@ -119,13 +119,13 @@ namespace InformaticsCertificationExamSystem.Controllers
                     students.Add(student);
                     _unitOfWork.StudentRepository.Insert(student);
                 }
-
+                var tin = 0;
                 _unitOfWork.SaveChange();
                 return Ok(students);
             }
             catch (Exception e)
             {
-                return BadRequest(e);
+                return BadRequest(e.InnerException);
             }
         }
         [HttpPut]

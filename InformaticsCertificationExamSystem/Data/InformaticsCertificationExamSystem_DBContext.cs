@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using InformaticsCertificationExamSystem.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace InformaticsCertificationExamSystem.Data
 {
@@ -63,6 +64,50 @@ namespace InformaticsCertificationExamSystem.Data
         public DbSet<ExaminationRoom_TestSchedule> ExaminationRoom_TestSchedule { get; set; }
         //public DbSet<Examination_ExaminationRoom> Examination_ExaminationRooms { get; set; }
         //public DbSet<TestSchedule_TheoryTest> TestSchedule_TheoryTests { get; set; }
+
+        public override int SaveChanges()
+        {
+            var maxId = this.Students.Max(p => (int?)p.Id) ?? 0;
+            var identifierCode = maxId + 1;
+            var hashcode = maxId + 1; ;
+            var rdom = new Random();
+            int hashCodeFinal = rdom.Next(10000, 19999);
+            string hashCodeFirst;
+            foreach (var item in ChangeTracker.Entries())
+            {
+                if (item.Entity is Student entityReference)
+                {
+                    switch (item.State)
+                    {
+                        case EntityState.Added:
+                            {
+                                if (entityReference.IdentifierCode == null || entityReference.IdentifierCode == "")
+                                {
+                                    entityReference.IdentifierCode = "TD_" + (identifierCode + 2000).ToString();
+                                    identifierCode++;
+                                }
+                                if (entityReference.HashCode == null || entityReference.HashCode == "")
+                                {
+                                    hashCodeFirst = SummaryService.IntToBase32(hashcode * 3 + 11);
+                                    if (hashCodeFirst.Length <= 8)
+                                    {
+                                        entityReference.HashCode = hashCodeFirst + (SummaryService.IntToBase32(hashCodeFinal)).Substring(0, 8 - hashCodeFirst.Length);
+                                    }
+                                    else
+                                    {
+                                        entityReference.HashCode = hashCodeFirst;
+                                    }
+                                    hashCodeFinal = hashCodeFinal + 3;
+                                    hashcode++;
+                                }
+                                break;
+                            }
+                    }
+                }
+            }
+            return base.SaveChanges();
+        }
+
 
         public InformaticsCertificationExamSystem_DBContext()
         {
