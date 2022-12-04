@@ -13,7 +13,7 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class TeacherController : ControllerBase
     {
 
@@ -46,7 +46,11 @@ namespace InformaticsCertificationExamSystem.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(_unitOfWork.TeacherRepository.GetAll().ToList());
+            var listTeachers = from teachers in  _unitOfWork.TeacherRepository.GetAll() 
+                               where teachers.PermissionId != 2
+                               select teachers;
+
+            return Ok(listTeachers.ToList());
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTeacher(int id)
@@ -74,6 +78,24 @@ namespace InformaticsCertificationExamSystem.Controllers
             {
                 return BadRequest("can not delete!");
             }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost("UpdateAdmin")]
+        public async Task<IActionResult> UpdateAdmin(TeacherModel NewTeacher)
+        {
+            try
+            {
+                var teacher = _mapper.Map<Teacher>(NewTeacher);
+                teacher.PermissionId = 2;
+                _unitOfWork.TeacherRepository.Update(teacher);
+                _unitOfWork.SaveChange();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+
         }
         [HttpPost("Update")]
         public async Task<IActionResult> Update(TeacherModel NewTeacher)

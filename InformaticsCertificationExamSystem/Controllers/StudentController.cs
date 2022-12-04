@@ -68,7 +68,6 @@ namespace InformaticsCertificationExamSystem.Controllers
                 Student studentadd = new Student()
                 {
                     Name = t.Name,
-                    BirthPlace = t.BirthPlace,
                     BirthDay = t.BirthDay,
                     Email = t.Email,
                     PhoneNumber = t.PhoneNumber,
@@ -105,9 +104,10 @@ namespace InformaticsCertificationExamSystem.Controllers
             {
                 var SCV_students = _csvService.ReadCSV<SCV_AddStudentModel>(file.OpenReadStream());
                 List<Student> students = new List<Student>();
-
+                List<string> emailStu = new List<string>();
                 foreach (var SCV_student in SCV_students)
                 {
+                    emailStu.Add(SCV_student.Email);
                     FileSubmitted filesubmit = new FileSubmitted();
                     FinalResult finalresult = new FinalResult();
                     var stud = _mapper.Map<StudentModel>(SCV_student);
@@ -118,6 +118,16 @@ namespace InformaticsCertificationExamSystem.Controllers
                     student.FinalResult = finalresult;
                     students.Add(student);
                     _unitOfWork.StudentRepository.Insert(student);
+                }
+                var Stu_DB = _unitOfWork.StudentRepository.GetAllByIdExamination(idExam);
+                //check email in list student of exam is Duplicates
+                
+                var emailStu_DB = (from studentDB in Stu_DB select studentDB.Email).ToList();
+                emailStu_DB.AddRange(emailStu);
+                var knownKeys = new HashSet<string>();
+                if (emailStu_DB.Any(item => !knownKeys.Add(item)))
+                {
+                    return BadRequest("Duplicates Email");
                 }
                 var tin = 0;
                 _unitOfWork.SaveChange();

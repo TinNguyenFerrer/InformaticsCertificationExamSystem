@@ -41,13 +41,18 @@ namespace InformaticsCertificationExamSystem.Controllers
             {
                 return BadRequest("Login False");
             }
+            var permission = "Teacher";
+            if (Teacher.FirstOrDefault().PermissionId == 2)
+            {
+                permission = "Admin";
+            }
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub ,_configuration["Jwt:Subject"]),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim("TeacherId", Teacher.First().Id.ToString()),
-                new Claim(ClaimTypes.Role,"User")
+                new Claim(ClaimTypes.Role,permission)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -60,11 +65,6 @@ namespace InformaticsCertificationExamSystem.Controllers
 
 
             var TokenResult = new JwtSecurityTokenHandler().WriteToken(token);
-            var permission = "admin";
-            if (Teacher.FirstOrDefault().PermissionId == 1)
-            {
-                permission = "teacher";
-            }
             return Ok(new
             {
                 token = TokenResult,
@@ -93,7 +93,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim("StudentId", students.First().Id.ToString()),
-                new Claim(ClaimTypes.Role,"User")
+                new Claim(ClaimTypes.Role,"Student")
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

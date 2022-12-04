@@ -15,7 +15,7 @@ using System.Text;
 
 namespace InformaticsCertificationExamSystem.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ExaminationController : ControllerBase
@@ -255,6 +255,7 @@ namespace InformaticsCertificationExamSystem.Controllers
         {
             try
             {
+                var exammi = _unitOfWork.ExaminationRepository.GetByID(id);
                 var result = from students in _unitOfWork.StudentRepository.GetAllByIdExamination(id)
                              join finalresult in _unitOfWork.FinalResultRepository.GetAll()
                              on students.FinalResultId equals finalresult.Id
@@ -262,12 +263,35 @@ namespace InformaticsCertificationExamSystem.Controllers
                              {
                                  students.Id,
                                  students.Name,
+                                 students.BirthDay,
+                                 examTime = exammi.StarTime,
+                                 students.PhoneNumber,
+                                 students.Email,
                                  students.IdentifierCode,
                                  finalresult.Practice,
                                  finalresult.Theory,
                                  finalresult.Excel,
                                  finalresult.PowerPoint,
                                  finalresult.Word,
+                                 finalresult.FinalMark,
+                                 finalresult.ResultStatus
+                             };
+                return Ok(result.ToArray());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e);
+            }
+        }
+        [HttpGet("get-all-marks")]
+        public IActionResult GetAllMark()
+        {
+            try
+            {
+                var result = from finalresult in _unitOfWork.FinalResultRepository.GetAll()
+                             where finalresult.FinalMark != 0
+                             select new
+                             {
                                  finalresult.FinalMark,
                                  finalresult.ResultStatus
                              };

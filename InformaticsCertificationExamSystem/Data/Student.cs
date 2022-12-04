@@ -9,7 +9,7 @@ namespace InformaticsCertificationExamSystem.Data
     [Table("Student")]
     [Index(nameof(IdentifierCode), IsUnique = true)]
     [Index(nameof(HashCode), IsUnique = true)]
-    [Index(nameof(Email), IsUnique = true)]
+    //[Index(nameof(Email), IsUnique = true)]
     public class Student
     {
         [Column("StudentID")]
@@ -24,10 +24,10 @@ namespace InformaticsCertificationExamSystem.Data
         [DefaultValue(true)]
         public Boolean Locked { get; set; } = true;
 
-        [Required]
-        [MaxLength(255)]
-        [Column("BirthPlace")]
-        public string BirthPlace { get; set; }
+        //[Required]
+        //[MaxLength(255)]
+        //[Column("BirthPlace")]
+        //public string BirthPlace { get; set; }
 
         [Required]
         [Column("BirthDay")]

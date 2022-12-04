@@ -18,10 +18,10 @@ namespace InformaticsCertificationExamSystem.Models
         [Column("Name")]
         public string Name { get; set; }
 
-        [Required]
-        [MaxLength(255)]
-        [Column("BirthPlace")]
-        public string BirthPlace { get; set; }
+        //[Required]
+        //[MaxLength(255)]
+        //[Column("BirthPlace")]
+        //public string BirthPlace { get; set; }
 
         [Required]
         [Column("BirthDay")]
