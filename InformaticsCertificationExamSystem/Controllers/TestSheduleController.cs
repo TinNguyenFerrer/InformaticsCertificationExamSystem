@@ -138,7 +138,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             int SumCapacityRooms = 0;
             foreach (var room in ListExaminationRoom)
             {
-                SumCapacityRooms = SumCapacityRooms + room.Capacity;
+                SumCapacityRooms = SumCapacityRooms + room.Capacity/2;
             }
             Examination examination = _unitOfWork.ExaminationRepository.GetByID(IdExam);//null
             DateTime dtEx = examination.StarTime;
@@ -188,7 +188,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                     ExaminationRoom_TestSchedule ex_test = new ExaminationRoom_TestSchedule();
                     ex_test.ExaminationRoom = room;
                     List<Student> LStudents = new List<Student>();
-                    for (int j = 0; j < ex_test.ExaminationRoom.Capacity; j++)
+                    for (int j = 0; j < ex_test.ExaminationRoom.Capacity/2; j++)
                     {
                         if (ListStudent.Count() == 0) break;
                         LStudents.Add(ListStudent.FirstOrDefault());
