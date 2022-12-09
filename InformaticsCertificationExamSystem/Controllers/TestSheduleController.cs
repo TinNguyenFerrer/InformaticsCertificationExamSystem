@@ -115,13 +115,27 @@ namespace InformaticsCertificationExamSystem.Controllers
         [HttpPost("AutoCreateTestSchedule")]
         public async Task<IActionResult> AutoCreateTestSchedule(int IdExam)
         {
+            Boolean startCreateAuto = false;
+            Boolean ScheduleEmpty = true;
             foreach (var Sched in _unitOfWork.TestScheduleRepository.GetAll())
             {
                 if (Sched.ExaminationId == IdExam)
                 {
-                    _unitOfWork.TestScheduleRepository.Delete(Sched.Id);
+                    ScheduleEmpty = false;
+                    var idRooms = _unitOfWork.ExaminationRoom_TestScheduleRepository.GetIdRoomByIdTestScheduleRepository(Sched.Id);
+                    foreach(var idrooom in idRooms)
+                    {
+                        var room = _unitOfWork.ExaminationRoomRepository.GetByID(idrooom);
+                        if (room == null) continue;
+                        if (room.Locked) startCreateAuto = true;
+                    }
+                    if (startCreateAuto)
+                    {
+                        _unitOfWork.TestScheduleRepository.Delete(Sched.Id);
+                    }
                 }
             }
+            if (!startCreateAuto && !ScheduleEmpty) return Ok("Not thing to do");
             var ListStudent = SummaryService.Randomize((from students in _unitOfWork.StudentRepository.GetAll()
                                                         where students.ExaminationId == IdExam
                                                         select students)).ToList();
@@ -204,6 +218,12 @@ namespace InformaticsCertificationExamSystem.Controllers
 
 
                 _unitOfWork.TestScheduleRepository.Insert(Schedule);
+            }
+            var exam = _unitOfWork.ExaminationRepository.GetByID(IdExam);
+            if (exam != null)
+            {
+                exam.IsScheduled = true;
+                _unitOfWork.ExaminationRepository.Update(exam);
             }
             _unitOfWork.SaveChange();
 

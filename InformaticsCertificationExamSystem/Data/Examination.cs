@@ -52,6 +52,14 @@ namespace InformaticsCertificationExamSystem.Data
         public float MinimumPracticeMark { get; set; }
         //-------------------------------------------------------------------------
         [DefaultValue(false)]
+        public Boolean IsAssignedSupervisor { get; set; } = false;
+        [DefaultValue(false)]
+        public Boolean IsScheduled { get; set; } = false;
+
+        [DefaultValue(false)]
+        public Boolean IsEnterScore { get; set; } = false;
+
+        [DefaultValue(false)]
         public Boolean IsCreateScorecard { get; set; } = false;
 
         //[Column("ReviewTime")]

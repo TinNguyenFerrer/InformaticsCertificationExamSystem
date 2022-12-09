@@ -28,13 +28,13 @@ namespace InformaticsCertificationExamSystem.Controllers
                              select Room_schedule.Supervisor).ToList();
             if (supervisors.Count() > 0)
             {
+                
                 foreach (var supervisor in supervisors)
                 {
                     if (supervisor == null) break;
                     _unitOfWork.SupervisorRepository.Delete(supervisor.Id);
                 }
             }
-
             var ExaminationRoom_TestSchedule = (from room_schedule in _unitOfWork.DbContext.ExaminationRoom_TestSchedule
                                    where room_schedule.TestSchedule.Id == IdTestSchedule
                                    select room_schedule).Distinct().ToList();
@@ -69,6 +69,30 @@ namespace InformaticsCertificationExamSystem.Controllers
                 //supervisor.Teachers.(t1);
                 supervisor.Teachers = ListTeacher;
                 _unitOfWork.SupervisorRepository.Insert(supervisor);
+            }
+            var testSchedul = _unitOfWork.TestScheduleRepository.GetByID(IdTestSchedule);
+            if (testSchedul != null)
+            {
+                testSchedul.IsAssignedSupervisor = true;
+                _unitOfWork.TestScheduleRepository.Update(testSchedul);
+                int m = -1;
+                if (testSchedul.ExaminationId != null)
+                {
+                    m = (int)testSchedul.ExaminationId;
+                    var exam = _unitOfWork.ExaminationRepository.GetByID(m);
+                    if (exam != null)
+                    {
+                        exam.IsAssignedSupervisor = true;
+                        foreach (var Sched in _unitOfWork.TestScheduleRepository.GetAll())
+                        {
+                            if (Sched.ExaminationId == exam.Id)
+                            {
+                                if (!Sched.IsAssignedSupervisor) exam.IsAssignedSupervisor = false;
+                            }
+                        }
+                        _unitOfWork.ExaminationRepository.Update(exam);
+                    }
+                }
             }
             _unitOfWork.SaveChange();
             return Ok();

@@ -4,6 +4,7 @@ using InformaticsCertificationExamSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InformaticsCertificationExamSystem.Migrations
 {
     [DbContext(typeof(InformaticsCertificationExamSystem_DBContext))]
-    partial class InformaticsCertificationExamSystem_DBContextModelSnapshot : ModelSnapshot
+    [Migration("20221209191815_db12.10")]
+    partial class db1210
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,9 +37,6 @@ namespace InformaticsCertificationExamSystem.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<bool>("IsAssignedSupervisor")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsCreateScorecard")
                         .HasColumnType("bit");
@@ -498,9 +497,6 @@ namespace InformaticsCertificationExamSystem.Migrations
 
                     b.Property<int?>("ExaminationId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsAssignedSupervisor")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()

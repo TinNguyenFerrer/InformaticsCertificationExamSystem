@@ -58,6 +58,12 @@ namespace InformaticsCertificationExamSystem.Controllers
                     var exam = _unitOfWork.ExaminationRepository.GetByID(student.ExaminationId);
                     if (student == null) continue;
                     FinalResult resultStudent = _unitOfWork.FinalResultRepository.GetByIdStudent(student.Id);
+                    var examinationUpdate = _unitOfWork.ExaminationRepository.GetByID(student.ExaminationId);
+                    if (examinationUpdate != null)
+                    {
+                        examinationUpdate.IsEnterScore = true;
+                        _unitOfWork.ExaminationRepository.Update(examinationUpdate);
+                    }
                     if (resultStudent == null) continue;
                     //Format float :","
                     var ci = (CultureInfo)CultureInfo.CurrentCulture.Clone();
@@ -117,7 +123,13 @@ namespace InformaticsCertificationExamSystem.Controllers
 
                     var students = _unitOfWork.StudentRepository.GetByHashCode(codeColumn.Cell(i).Value.ToString());
                     if (students == null) continue;
+
                     var exam = _unitOfWork.ExaminationRepository.GetByID(students.ExaminationId);
+                    if (exam != null)
+                    {
+                        exam.IsEnterScore = true;
+                        _unitOfWork.ExaminationRepository.Update(exam);
+                    }
 
                     double wordMark = 0;
                     double excelMark = 0;

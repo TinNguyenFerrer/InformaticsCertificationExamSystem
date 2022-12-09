@@ -116,6 +116,10 @@ namespace InformaticsCertificationExamSystem.Controllers
                     Student student = _mapper.Map<Student>(stud);
                     student.FileSubmitted = filesubmit;
                     student.FinalResult = finalresult;
+                    if(student.IdentifierCode == "" || student.IdentifierCode == null)
+                    {
+                        student.StudentTypeId = 2;
+                    }
                     students.Add(student);
                     _unitOfWork.StudentRepository.Insert(student);
                 }

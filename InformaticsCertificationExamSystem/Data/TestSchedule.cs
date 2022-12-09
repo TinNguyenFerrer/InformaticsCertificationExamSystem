@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,9 @@ namespace InformaticsCertificationExamSystem.Data
         public virtual ICollection<Student>? Students { get; set; }
         [ForeignKey("Examination")]
         public int? ExaminationId { get; set; }
+        //----------------------------------------------------------
+        [DefaultValue(false)]
+        public Boolean IsAssignedSupervisor { get; set; } = false;
         [JsonIgnore]
         //[ForeignKey("ExaminationId")]
         public virtual Examination? Examination { get; set; }
