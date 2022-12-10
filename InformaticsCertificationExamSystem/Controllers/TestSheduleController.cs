@@ -19,7 +19,8 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
+    //[Authorize(Roles = "Admin")]
     public class TestSheduleController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -266,6 +267,7 @@ namespace InformaticsCertificationExamSystem.Controllers
         }
 
         //======================--------------------------------------=====================
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("GetScheduleByTokenTeacher")]
         public IActionResult GetScheduleByTokenTeacher()
         {
@@ -310,7 +312,7 @@ namespace InformaticsCertificationExamSystem.Controllers
 
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("GetScheduleByTokenIdExam")]
         public IActionResult GetScheduleByTokenIdExam(int idExam)
         {

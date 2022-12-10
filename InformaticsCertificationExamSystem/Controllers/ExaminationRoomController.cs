@@ -11,6 +11,7 @@ namespace InformaticsCertificationExamSystem.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    //[Authorize(Roles = "Admin")]
     public class ExaminationRoomController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

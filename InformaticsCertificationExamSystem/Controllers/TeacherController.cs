@@ -14,6 +14,7 @@ namespace InformaticsCertificationExamSystem.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    //[Authorize(Roles = "Admin")]
     public class TeacherController : ControllerBase
     {
 
@@ -57,6 +58,14 @@ namespace InformaticsCertificationExamSystem.Controllers
         {
             try
             {
+                var teacher = _unitOfWork.TeacherRepository.GetByID(id);
+                var sup = (from te in _unitOfWork.DbContext.Teachers
+                          where te.Id == id
+                          select te.Supervisors).ToList();
+                if (teacher != null)
+                {
+                    if (sup[0].Count()!=0) return BadRequest("Teacher in schedule");
+                }
                 _unitOfWork.TeacherRepository.Delete(id);
                 _unitOfWork.SaveChange();
                 return Ok();
@@ -66,6 +75,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                 return BadRequest("can not delete!");
             }
         }
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTeacher(int id)
         {
@@ -97,6 +107,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             }
 
         }
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpPost("Update")]
         public async Task<IActionResult> Update(TeacherModel NewTeacher)
         {
@@ -112,7 +123,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             }
             
         }
-
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("GetTeacherInfoByTokenIdExam")]
         public IActionResult GetTeacherInfoByTokenIdExam()
         {

@@ -18,6 +18,7 @@ namespace InformaticsCertificationExamSystem.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize(Roles = "Admin")]
     public class ExaminationController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -29,6 +30,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             _mapper = mapper;
             _csvService = csvService;
         }
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllExamination()
         {
@@ -289,7 +291,11 @@ namespace InformaticsCertificationExamSystem.Controllers
             try
             {
                 var result = from finalresult in _unitOfWork.FinalResultRepository.GetAll()
-                             where finalresult.FinalMark != 0
+                             join students in _unitOfWork.StudentRepository.GetAll()
+                             on finalresult.Id equals students.FinalResultId
+                             join exam in _unitOfWork.ExaminationRepository.GetAll()
+                             on students.ExaminationId equals exam.Id
+                             where exam.IsEnterScore==true
                              select new
                              {
                                  finalresult.FinalMark,

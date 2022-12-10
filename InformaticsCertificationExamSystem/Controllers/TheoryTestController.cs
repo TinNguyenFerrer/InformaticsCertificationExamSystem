@@ -15,7 +15,8 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
+    //[Authorize(Roles = "Admin")]
     public class TheoryTestController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -302,6 +303,10 @@ namespace InformaticsCertificationExamSystem.Controllers
                 {
                     return BadRequest("Id student error");
                 }
+
+                var studentIsLocked = _unitOfWork.StudentRepository.GetByID(int.Parse(idstudentclaim.Value));
+                if (studentIsLocked.Locked) return BadRequest("Student locked");
+
                 //var idstudent = Int32.Parse(idstudentclaim.Value);
                 var submitfile = from student in _unitOfWork.StudentRepository.GetAll()
                                  join filesubmit in _unitOfWork.FileSubmittedRepository.GetAll()
@@ -385,6 +390,10 @@ namespace InformaticsCertificationExamSystem.Controllers
                 {
                     return BadRequest("Id student error");
                 }
+
+                var studentIsLocked = _unitOfWork.StudentRepository.GetByID(int.Parse(idstudentclaim.Value));
+                if (studentIsLocked.Locked) return BadRequest("Student locked");
+
                 //var idstudent = Int32.Parse(idstudentclaim.Value);
                 var submitfile = from student in _unitOfWork.StudentRepository.GetAll()
                                  join filesubmit in _unitOfWork.FileSubmittedRepository.GetAll()
@@ -468,6 +477,10 @@ namespace InformaticsCertificationExamSystem.Controllers
                 {
                     return BadRequest("Id student error");
                 }
+
+                var studentIsLocked = _unitOfWork.StudentRepository.GetByID(int.Parse(idstudentclaim.Value));
+                if (studentIsLocked.Locked) return BadRequest("Student locked");
+
                 //var idstudent = Int32.Parse(idstudentclaim.Value);
                 var submitfile = from student in _unitOfWork.StudentRepository.GetAll()
                                  join filesubmit in _unitOfWork.FileSubmittedRepository.GetAll()
@@ -550,6 +563,10 @@ namespace InformaticsCertificationExamSystem.Controllers
                 {
                     return BadRequest("Id student error");
                 }
+
+                var studentIsLocked = _unitOfWork.StudentRepository.GetByID(int.Parse(idstudentclaim.Value));
+                if (studentIsLocked.Locked) return BadRequest("Student locked");
+
                 //var idstudent = Int32.Parse(idstudentclaim.Value);
                 var submitfile = from student in _unitOfWork.StudentRepository.GetAll()
                                  join filesubmit in _unitOfWork.FileSubmittedRepository.GetAll()

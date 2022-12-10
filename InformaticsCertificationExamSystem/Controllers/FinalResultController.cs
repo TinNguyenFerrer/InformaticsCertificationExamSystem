@@ -6,6 +6,7 @@ using InformaticsCertificationExamSystem.DAL;
 using InformaticsCertificationExamSystem.Data;
 using InformaticsCertificationExamSystem.Models;
 using InformaticsCertificationExamSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
@@ -15,6 +16,8 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+    //[Authorize(Roles = "Admin")]
     public class FinalResultController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -75,7 +78,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                     if (resultStudent.FinalMark > 10) return BadRequest("Finalmark more than 10");
                     if (resultStudent.Theory > 10) return BadRequest("Theory more than 10");
 
-                    if (resultStudent.Theory >= exam.MinimumTheoreticalMark || resultStudent.Practice >= exam.MinimumPracticeMark)
+                    if (resultStudent.Theory >= exam.MinimumTheoreticalMark && resultStudent.Practice >= exam.MinimumPracticeMark)
                     {
                         resultStudent.ResultStatus = true;
                     }
@@ -168,7 +171,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                     if (resultStudent.FinalMark > 10) return BadRequest("Finalmark more than 10");
                     if (resultStudent.Practice > 10) return BadRequest("Practice more than 10");
 
-                    if (resultStudent.Theory >= exam.MinimumTheoreticalMark || resultStudent.Practice >= exam.MinimumPracticeMark)
+                    if (resultStudent.Theory >= exam.MinimumTheoreticalMark && resultStudent.Practice >= exam.MinimumPracticeMark)
                     {
                         resultStudent.ResultStatus = true;
                     }

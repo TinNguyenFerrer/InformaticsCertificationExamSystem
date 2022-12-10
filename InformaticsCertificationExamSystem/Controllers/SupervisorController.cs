@@ -9,7 +9,8 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
+    //[Authorize(Roles = "Admin")]
     public class SupervisorController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -40,7 +41,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                                    select room_schedule).Distinct().ToList();
                           
             var AllTeacher = from teachers in _unitOfWork.TeacherRepository.GetAll()
-                             where teachers.Locked == false
+                             where teachers.Locked == false && teachers.PermissionId == 1
                              select teachers;
             if (ExaminationRoom_TestSchedule.Count()*2 > AllTeacher.ToList().Count()) return BadRequest("not enough teachers"); 
 

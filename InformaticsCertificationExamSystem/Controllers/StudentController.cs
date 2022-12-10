@@ -13,7 +13,8 @@ namespace InformaticsCertificationExamSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
+    //[Authorize(Roles = "Admin")]
     public class StudentController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -31,7 +32,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             var AllStudent = _unitOfWork.StudentRepository.GetAll().ToList();
             return Ok(AllStudent);
         }
-
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("GetAllByIdExamination")]
         public async Task<IActionResult> GetAllStudentByIdExamination(int id)
         {
@@ -116,7 +117,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                     Student student = _mapper.Map<Student>(stud);
                     student.FileSubmitted = filesubmit;
                     student.FinalResult = finalresult;
-                    if(student.IdentifierCode == "" || student.IdentifierCode == null)
+                    if (student.IdentifierCode == "" || student.IdentifierCode == null)
                     {
                         student.StudentTypeId = 2;
                     }
@@ -125,7 +126,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                 }
                 var Stu_DB = _unitOfWork.StudentRepository.GetAllByIdExamination(idExam);
                 //check email in list student of exam is Duplicates
-                
+
                 var emailStu_DB = (from studentDB in Stu_DB select studentDB.Email).ToList();
                 emailStu_DB.AddRange(emailStu);
                 var knownKeys = new HashSet<string>();
@@ -170,6 +171,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                 return BadRequest("can not delete!");
             }
         }
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("GetAllByRoomAndTestSchedule")]
         public IActionResult GetAllByRoomAndTestSchedule(int ExamRom_TestScheid)
         {
@@ -179,6 +181,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             return Ok(Students);
         }
         //Get all student by id ExamRom_TestSche and info file submited
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("GetAllInforSubmitFile")]
         public IActionResult GetAllInforSubmitFile(int ExamRom_TestScheid)
         {
@@ -198,6 +201,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             return Ok(result);
         }
         //-----------------mở khóa cho sinh viên làm bài------------------
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("UnlockStudent")]
         public IActionResult UnlockStudent(int ExamRom_TestScheid)
         {
@@ -215,6 +219,7 @@ namespace InformaticsCertificationExamSystem.Controllers
             return Ok();
         }
         //-------------Khóa tài khoản làm bài sinh viên----------------
+        [Authorize(Roles = "Admin,Teacher")]
         [HttpGet("LockStudent")]
         public IActionResult LockStudent(int ExamRom_TestScheid)
         {
@@ -230,6 +235,21 @@ namespace InformaticsCertificationExamSystem.Controllers
             }
             _unitOfWork.SaveChange();
             return Ok();
+        }
+        [HttpGet("CheckStudentIsLocked")]
+        public IActionResult CheckStudentIsLocked(int ExamRom_TestScheid)
+        {
+            Boolean ListStudentIsLocked = false;
+            var students = from student in _unitOfWork.DbContext.Students
+                           join filesubmitted in _unitOfWork.FileSubmittedRepository.GetAll()
+                           on student.FileSubmittedId equals filesubmitted.Id
+                           where student.ExaminationRoom_TestScheduleId == ExamRom_TestScheid
+                           select student;
+            foreach (var student in students)
+            {
+                if (student.Locked) ListStudentIsLocked = true;
+            }
+            return Ok(ListStudentIsLocked);
         }
         //==========================================================
 
@@ -249,7 +269,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                 //ramdom number
                 var rdom = new Random();
                 //int t = (IdExam % 10*10000)+ IdExam*3;
-                
+
                 if (!students.Any())
                 {
                     return BadRequest("Examination not have Student");
@@ -260,15 +280,16 @@ namespace InformaticsCertificationExamSystem.Controllers
                     var studentTemp = student;
                     if (student.HashCode == null)
                     {
-                        var hashCodeFirst = SummaryService.IntToBase32(student.Id*3+5);
+                        var hashCodeFirst = SummaryService.IntToBase32(student.Id * 3 + 5);
                         if (hashCodeFirst.Length <= 8)
                         {
                             studentTemp.HashCode = hashCodeFirst + (SummaryService.IntToBase32(hashCodeFinal)).Substring(0, 8 - hashCodeFirst.Length);
-                        }else
+                        }
+                        else
                         {
                             studentTemp.HashCode = hashCodeFirst;
                         }
-                        hashCodeFinal = hashCodeFinal+3;
+                        hashCodeFinal = hashCodeFinal + 3;
                     }
                     if (student.IdentifierCode == null)
                     {
@@ -291,14 +312,14 @@ namespace InformaticsCertificationExamSystem.Controllers
                         _unitOfWork.StudentRepository.Update(student);
                     }
                 }
-                
+
                 string path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "FileSubmit"));
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
                 }
                 var random = new Random();
-                
+
                 foreach (var room_schedu in listRoom_Schedule)
                 {
                     var pathSchedule = Path.Combine(path, room_schedu.TestScheduleId.ToString());
@@ -306,7 +327,7 @@ namespace InformaticsCertificationExamSystem.Controllers
                     {
                         Directory.CreateDirectory(pathSchedule);
                     }
-                    pathSchedule = Path.Combine(pathSchedule, SummaryService.IntToBase32(room_schedu.ExaminationRoomId + room_schedu.TestScheduleId+12));
+                    pathSchedule = Path.Combine(pathSchedule, SummaryService.IntToBase32(room_schedu.ExaminationRoomId + room_schedu.TestScheduleId + 12));
                     if (!Directory.Exists(pathSchedule))
                     {
                         Directory.CreateDirectory(pathSchedule);
@@ -366,9 +387,11 @@ namespace InformaticsCertificationExamSystem.Controllers
                 var idStudentClaim = claim
                     .Where(x => x.Type == "StudentId")
                     .FirstOrDefault();
+                var idStude = int.Parse(idStudentClaim.Value);
                 var idSchedule = (from student in _unitOfWork.StudentRepository.GetAll()
                                   join schedule_room in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
                                   on student.ExaminationRoom_TestScheduleId equals schedule_room.Id
+                                  where student.Id == idStude
                                   select schedule_room.TestScheduleId);
                 if (!idSchedule.Any()) { return BadRequest("Id schedule test invalid"); }
 
@@ -377,6 +400,298 @@ namespace InformaticsCertificationExamSystem.Controllers
             catch (Exception e)
             {
                 return BadRequest("file not found");
+            }
+        }
+        [HttpGet("IsUploadFileExcel")]
+        // kiểm tra thí sinh đã upfile chưa
+        public async Task<IActionResult> IsUploadFileExcel(int scheduleId)
+        {
+            try
+            {
+                string path = "";
+                Console.WriteLine("================================");
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                // Gets list of claims.
+                IEnumerable<Claim> claim = identity.Claims;
+                if (claim.Count() == 0) { return BadRequest("Token invalid"); }
+
+                var idstudentclaim = claim
+                    .Where(x => x.Type == "StudentId")
+                    .FirstOrDefault();
+                if (idstudentclaim == null)
+                {
+                    return BadRequest("Id student error");
+                }
+
+                var studentIsLocked = _unitOfWork.StudentRepository.GetByID(int.Parse(idstudentclaim.Value));
+                if (studentIsLocked.Locked) return BadRequest("Student locked");
+
+                //var idstudent = Int32.Parse(idstudentclaim.Value);
+                var submitfile = from student in _unitOfWork.StudentRepository.GetAll()
+                                 join filesubmit in _unitOfWork.FileSubmittedRepository.GetAll()
+                                 on student.FileSubmittedId equals filesubmit.Id
+                                 where student.Id.ToString() == idstudentclaim.Value
+                                 select filesubmit;
+                if (!submitfile.Any()) { return BadRequest("Submit file Excel error"); }
+                var subfile = submitfile.FirstOrDefault();
+                if (!subfile.FileExcel) return BadRequest("File is not true in subfile.FileExcel");
+                path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "FileSubmit"));
+
+                path = Path.Combine(path, scheduleId.ToString());
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                var idroom = from student in _unitOfWork.StudentRepository.GetAll()
+                             join exam_schedu in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                             on student.ExaminationRoom_TestScheduleId equals exam_schedu.Id
+                             where student.Id.ToString() == idstudentclaim.Value
+                             select exam_schedu;
+                if (!idroom.Any()) { return BadRequest("Get id room failure"); }
+                path = Path.Combine(path, SummaryService.IntToBase32(idroom.First().ExaminationRoomId + idroom.First().TestScheduleId + 12));//path to file of each room 
+
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                var studentLogin = _unitOfWork.StudentRepository.GetByID(Int32.Parse(idstudentclaim.Value));
+                if (studentLogin.HashCode == null) return BadRequest("HashCode null");
+                path = Path.Combine(path, studentLogin.HashCode);
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                string[] filePaths = Directory.GetFiles(path, "*.xlsx");
+                if (filePaths.Length == 0) return BadRequest("Not found zip file");
+                string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileNameReturn = filePaths[0].Split("\\").LastOrDefault();
+                var stream = System.IO.File.ReadAllBytes(filePaths[0]);
+                return File(stream, mimeType, fileNameReturn);
+                //foreach (var f in filePaths)
+                //{
+                //    System.IO.File.Delete(f);
+                //}
+                //using (var fileStream = new FileStream(Path.Combine(path, file.FileName), FileMode.Create))
+                //{
+                //    await file.CopyToAsync(fileStream);
+                //}
+                //_unitOfWork.SaveChange();
+                //return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+        [HttpGet("IsUploadFileZip")]
+        public async Task<IActionResult> IsUploadFileZip(int scheduleId)
+        {
+            try
+            {
+                string path = "";
+                Console.WriteLine("================================");
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                // Gets list of claims.
+                IEnumerable<Claim> claim = identity.Claims;
+                if (claim.Count() == 0) { return BadRequest("Token invalid"); }
+
+                var idstudentclaim = claim
+                    .Where(x => x.Type == "StudentId")
+                    .FirstOrDefault();
+                if (idstudentclaim == null)
+                {
+                    return BadRequest("Id student error");
+                }
+
+                var studentIsLocked = _unitOfWork.StudentRepository.GetByID(int.Parse(idstudentclaim.Value));
+                if (studentIsLocked.Locked) return BadRequest("Student locked");
+
+                //var idstudent = Int32.Parse(idstudentclaim.Value);
+                var submitfile = from student in _unitOfWork.StudentRepository.GetAll()
+                                 join filesubmit in _unitOfWork.FileSubmittedRepository.GetAll()
+                                 on student.FileSubmittedId equals filesubmit.Id
+                                 where student.Id.ToString() == idstudentclaim.Value
+                                 select filesubmit;
+                if (!submitfile.Any()) { return BadRequest("Submit file Excel error"); }
+                var subfile = submitfile.FirstOrDefault();
+                if (!subfile.FileExcel) return BadRequest("File is not true in subfile.FileExcel");
+                path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "FileSubmit"));
+
+                path = Path.Combine(path, scheduleId.ToString());
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                var idroom = from student in _unitOfWork.StudentRepository.GetAll()
+                             join exam_schedu in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                             on student.ExaminationRoom_TestScheduleId equals exam_schedu.Id
+                             where student.Id.ToString() == idstudentclaim.Value
+                             select exam_schedu;
+                if (!idroom.Any()) { return BadRequest("Get id room failure"); }
+                path = Path.Combine(path, SummaryService.IntToBase32(idroom.First().ExaminationRoomId + idroom.First().TestScheduleId + 12));//path to file of each room 
+
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                var studentLogin = _unitOfWork.StudentRepository.GetByID(Int32.Parse(idstudentclaim.Value));
+                if (studentLogin.HashCode == null) return BadRequest("HashCode null");
+                path = Path.Combine(path, studentLogin.HashCode);
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                string[] filePaths = Directory.GetFiles(path, "*.zip");
+                if (filePaths.Length == 0) return BadRequest("Not found zip file");
+                //string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileNameReturn = filePaths[0].Split("\\").LastOrDefault();
+                var stream = System.IO.File.ReadAllBytes(filePaths[0]);
+                return File(stream, "application/zip", fileNameReturn);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("IsUploadFileWord")]
+        public async Task<IActionResult> IsUploadFileWord(int scheduleId)
+        {
+            try
+            {
+                string path = "";
+                Console.WriteLine("================================");
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                // Gets list of claims.
+                IEnumerable<Claim> claim = identity.Claims;
+                if (claim.Count() == 0) { return BadRequest("Token invalid"); }
+
+                var idstudentclaim = claim
+                    .Where(x => x.Type == "StudentId")
+                    .FirstOrDefault();
+                if (idstudentclaim == null)
+                {
+                    return BadRequest("Id student error");
+                }
+
+                var studentIsLocked = _unitOfWork.StudentRepository.GetByID(int.Parse(idstudentclaim.Value));
+                if (studentIsLocked.Locked) return BadRequest("Student locked");
+
+                //var idstudent = Int32.Parse(idstudentclaim.Value);
+                var submitfile = from student in _unitOfWork.StudentRepository.GetAll()
+                                 join filesubmit in _unitOfWork.FileSubmittedRepository.GetAll()
+                                 on student.FileSubmittedId equals filesubmit.Id
+                                 where student.Id.ToString() == idstudentclaim.Value
+                                 select filesubmit;
+                if (!submitfile.Any()) { return BadRequest("Submit file Excel error"); }
+                var subfile = submitfile.FirstOrDefault();
+                if (!subfile.FileExcel) return BadRequest("File is not true in subfile.FileExcel");
+                path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "FileSubmit"));
+
+                path = Path.Combine(path, scheduleId.ToString());
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                var idroom = from student in _unitOfWork.StudentRepository.GetAll()
+                             join exam_schedu in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                             on student.ExaminationRoom_TestScheduleId equals exam_schedu.Id
+                             where student.Id.ToString() == idstudentclaim.Value
+                             select exam_schedu;
+                if (!idroom.Any()) { return BadRequest("Get id room failure"); }
+                path = Path.Combine(path, SummaryService.IntToBase32(idroom.First().ExaminationRoomId + idroom.First().TestScheduleId + 12));//path to file of each room 
+
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                var studentLogin = _unitOfWork.StudentRepository.GetByID(Int32.Parse(idstudentclaim.Value));
+                if (studentLogin.HashCode == null) return BadRequest("HashCode null");
+                path = Path.Combine(path, studentLogin.HashCode);
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                string[] filePaths = Directory.GetFiles(path, "*.docx");
+                if (filePaths.Length == 0) return BadRequest("Not found zip file");
+                //string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileNameReturn = filePaths[0].Split("\\").LastOrDefault();
+                var stream = System.IO.File.ReadAllBytes(filePaths[0]);
+                return File(stream, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileNameReturn);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("IsUploadFilePowerPoint")]
+        public async Task<IActionResult> IsUploadFilePowerPoint(int scheduleId)
+        {
+            try
+            {
+                string path = "";
+                Console.WriteLine("================================");
+                var identity = HttpContext.User.Identity as ClaimsIdentity;
+                // Gets list of claims.
+                IEnumerable<Claim> claim = identity.Claims;
+                if (claim.Count() == 0) { return BadRequest("Token invalid"); }
+
+                var idstudentclaim = claim
+                    .Where(x => x.Type == "StudentId")
+                    .FirstOrDefault();
+                if (idstudentclaim == null)
+                {
+                    return BadRequest("Id student error");
+                }
+
+                var studentIsLocked = _unitOfWork.StudentRepository.GetByID(int.Parse(idstudentclaim.Value));
+                if (studentIsLocked.Locked) return BadRequest("Student locked");
+
+                //var idstudent = Int32.Parse(idstudentclaim.Value);
+                var submitfile = from student in _unitOfWork.StudentRepository.GetAll()
+                                 join filesubmit in _unitOfWork.FileSubmittedRepository.GetAll()
+                                 on student.FileSubmittedId equals filesubmit.Id
+                                 where student.Id.ToString() == idstudentclaim.Value
+                                 select filesubmit;
+                if (!submitfile.Any()) { return BadRequest("Submit file Excel error"); }
+                var subfile = submitfile.FirstOrDefault();
+                if (!subfile.FileExcel) return BadRequest("File is not true in subfile.FileExcel");
+                path = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "FileSubmit"));
+
+                path = Path.Combine(path, scheduleId.ToString());
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                var idroom = from student in _unitOfWork.StudentRepository.GetAll()
+                             join exam_schedu in _unitOfWork.ExaminationRoom_TestScheduleRepository.GetAll()
+                             on student.ExaminationRoom_TestScheduleId equals exam_schedu.Id
+                             where student.Id.ToString() == idstudentclaim.Value
+                             select exam_schedu;
+                if (!idroom.Any()) { return BadRequest("Get id room failure"); }
+                path = Path.Combine(path, SummaryService.IntToBase32(idroom.First().ExaminationRoomId + idroom.First().TestScheduleId + 12));//path to file of each room 
+
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                var studentLogin = _unitOfWork.StudentRepository.GetByID(Int32.Parse(idstudentclaim.Value));
+                if (studentLogin.HashCode == null) return BadRequest("HashCode null");
+                path = Path.Combine(path, studentLogin.HashCode);
+                if (!Directory.Exists(path))
+                {
+                    return BadRequest("Not found file");
+                }
+                string[] filePaths = Directory.GetFiles(path, "*.pptx");
+                if (filePaths.Length == 0) return BadRequest("Not found zip file");
+                //string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileNameReturn = filePaths[0].Split("\\").LastOrDefault();
+                var stream = System.IO.File.ReadAllBytes(filePaths[0]);
+                return File(stream, "application/vnd.openxmlformats-officedocument.presentationml.presentation", fileNameReturn);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 
